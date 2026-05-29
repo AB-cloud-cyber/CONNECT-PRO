@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == 'edition' %}Modifier{% else %}Nouveau profil{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <p class="section-eyebrow">{% if mode == 'edition' %}Édition{% else %}Inscription{% endif %}</p>
+        <h1 class="page-title">
+            {% if mode == 'edition' %}Modifier le profil{% else %}Créer un profil investisseur{% endif %}
+        </h1>
+    </div>
+    <a href="{{ url_for('liste_chefs') }}" class="btn btn-ghost">← Retour</a>
+</div>
+
+<div class="form-container">
+    <form method="POST" class="pro-form" novalidate>
+
+        <div class="form-section">
+            <h2 class="form-section-title">Identité</h2>
+            <div class="form-row">
+                <div class="form-group form-col-2">
+                    <label for="prenom_chef">Prénom <span class="required">*</span></label>
+                    <input type="text" id="prenom_chef" name="prenom_chef"
+                           value="{{ chef.get('prenom_chef', '') }}" placeholder="ex: Jean" required>
+                </div>
+                <div class="form-group form-col-2">
+                    <label for="nom_chef">Nom <span class="required">*</span></label>
+                    <input type="text" id="nom_chef" name="nom_chef"
+                           value="{{ chef.get('nom_chef', '') }}" placeholder="ex: Dupont" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group form-col-2">
+                    <label for="email_contact">Email <span class="required">*</span></label>
+                    <input type="email" id="email_contact" name="email_contact"
+                           value="{{ chef.get('email_contact', '') }}" placeholder="jean.dupont@email.com" required>
+                </div>
+                <div class="form-group form-col-2">
+                    <label for="telephone">Téléphone</label>
+                    <input type="tel" id="telephone" name="telephone"
+                           value="{{ chef.get('telephone', '') }}" placeholder="+237 6XX XXX XXX">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description_profil">Description du profil</label>
+                <textarea id="description_profil" name="description_profil" rows="4"
+                          placeholder="Décrivez votre parcours, vos objectifs d'investissement, vos domaines d'expertise…">{{ chef.get('description_profil', '') }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="form-section-title">Intérêts & Recherche</h2>
+            <div class="form-row">
+                <div class="form-group form-col-2">
+                    <label for="secteur_interet">Secteur d'intérêt <span class="required">*</span></label>
+                    <select id="secteur_interet" name="secteur_interet" required>
+                        <option value="">-- Choisir --</option>
+                        {% set secteurs = ['Technologie', 'Fintech', 'Santé', 'Éducation', 'E-commerce',
+                                           'IA & Machine Learning', 'Energie', 'Agriculture', 'Immobilier',
+                                           'Logistique', 'Médias', 'Tourisme', 'Industrie', 'Autre'] %}
+                        {% for s in secteurs %}
+                        <option value="{{ s }}" {% if chef.get('secteur_interet') == s %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group form-col-2">
+                    <label for="budget_investissement">Budget d'investissement</label>
+                    <input type="text" id="budget_investissement" name="budget_investissement"
+                           value="{{ chef.get('budget_investissement', '') }}"
+                           placeholder="ex: 50k–200k EUR">
+                </div>
+            </div>
+            <div class="form-group form-col-2">
+                <label for="localisation">Localisation</label>
+                <input type="text" id="localisation" name="localisation"
+                       value="{{ chef.get('localisation', '') }}" placeholder="ex: Yaoundé, Cameroun">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="form-section-title">Compétences recherchées</h2>
+            <div class="form-group">
+                <label for="competences_recherchees">
+                    Compétences & expertises souhaitées
+                    <span class="field-hint">Séparez par des virgules</span>
+                </label>
+                <input type="text" id="competences_recherchees" name="competences_recherchees"
+                       value="{{ chef.get('competences_recherchees', '') }}"
+                       placeholder="ex: IA, Gestion de Projet, Levée de Fonds, Marketing">
+                <div class="skills-preview" id="skills-preview"></div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ url_for('liste_chefs') }}" class="btn btn-ghost">Annuler</a>
+            <button type="submit" class="btn btn-primary btn-lg">
+                {% if mode == 'edition' %}Enregistrer les modifications{% else %}Créer le profil{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const input = document.getElementById('competences_recherchees');
+const preview = document.getElementById('skills-preview');
+function updatePreview() {
+    const skills = input.value.split(',').map(s => s.trim()).filter(Boolean);
+    preview.innerHTML = skills.map(s => `<span class="skill-tag chef-tag">${s}</span>`).join('');
+}
+input.addEventListener('input', updatePreview);
+updatePreview();
+</script>
+{% endblock %}

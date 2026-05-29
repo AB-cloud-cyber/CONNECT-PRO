@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+        <p class="hero-eyebrow">Plateforme d'Intelligence Relationnelle</p>
+        <h1 class="hero-title">
+            Connectez les<br>
+            <em>bonnes personnes</em><br>
+            aux bonnes startups
+        </h1>
+        <p class="hero-subtitle">
+            Notre algorithme de matching analyse les secteurs, compétences et profils
+            pour vous proposer les meilleures mises en relation professionnelles.
+        </p>
+        <div class="hero-actions">
+            <a href="{{ url_for('matching_dashboard') }}" class="btn btn-primary btn-lg">
+                Lancer un matching
+            </a>
+            <a href="{{ url_for('liste_entreprises') }}" class="btn btn-ghost btn-lg">
+                Explorer les startups →
+            </a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="network-lines">
+            <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="200" cy="200" r="4" fill="var(--accent)" opacity="0.9"/>
+                <circle cx="100" cy="120" r="3" fill="var(--accent-soft)" opacity="0.7"/>
+                <circle cx="310" cy="140" r="3" fill="var(--accent-soft)" opacity="0.7"/>
+                <circle cx="80"  cy="290" r="3" fill="var(--accent-soft)" opacity="0.7"/>
+                <circle cx="330" cy="290" r="3" fill="var(--accent-soft)" opacity="0.7"/>
+                <circle cx="200" cy="80"  r="2" fill="var(--accent-muted)" opacity="0.5"/>
+                <circle cx="200" cy="340" r="2" fill="var(--accent-muted)" opacity="0.5"/>
+                <line x1="200" y1="200" x2="100" y2="120" stroke="var(--accent)" stroke-width="0.8" opacity="0.4"/>
+                <line x1="200" y1="200" x2="310" y2="140" stroke="var(--accent)" stroke-width="0.8" opacity="0.4"/>
+                <line x1="200" y1="200" x2="80"  y2="290" stroke="var(--accent)" stroke-width="0.8" opacity="0.4"/>
+                <line x1="200" y1="200" x2="330" y2="290" stroke="var(--accent)" stroke-width="0.8" opacity="0.4"/>
+                <line x1="200" y1="200" x2="200" y2="80"  stroke="var(--accent)" stroke-width="0.8" opacity="0.3"/>
+                <line x1="200" y1="200" x2="200" y2="340" stroke="var(--accent)" stroke-width="0.8" opacity="0.3"/>
+                <line x1="100" y1="120" x2="310" y2="140" stroke="var(--accent-muted)" stroke-width="0.5" opacity="0.2"/>
+                <line x1="80"  y1="290" x2="330" y2="290" stroke="var(--accent-muted)" stroke-width="0.5" opacity="0.2"/>
+            </svg>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-bar">
+    <div class="stat-item">
+        <span class="stat-number" data-target="{{ stats.nb_startups }}">{{ stats.nb_startups }}</span>
+        <span class="stat-label">Startups inscrites</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+        <span class="stat-number" data-target="{{ stats.nb_chefs }}">{{ stats.nb_chefs }}</span>
+        <span class="stat-label">Investisseurs actifs</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+        <span class="stat-number" data-target="{{ stats.nb_matchs }}">{{ stats.nb_matchs }}</span>
+        <span class="stat-label">Matchs potentiels</span>
+    </div>
+</section>
+
+<!-- COMMENT ÇA MARCHE -->
+<section class="section how-it-works">
+    <div class="section-header">
+        <p class="section-eyebrow">Processus</p>
+        <h2 class="section-title">Comment fonctionne le matching ?</h2>
+    </div>
+    <div class="steps-grid">
+        <div class="step-card">
+            <div class="step-number">01</div>
+            <h3>Inscrivez votre profil</h3>
+            <p>Renseignez votre secteur, vos compétences et vos objectifs en quelques minutes.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+            <div class="step-number">02</div>
+            <h3>L'algorithme analyse</h3>
+            <p>Notre moteur TF-IDF + similarité cosinus compare secteurs, compétences et localisations.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+            <div class="step-number">03</div>
+            <h3>Recevez vos matchs</h3>
+            <p>Les profils les plus compatibles apparaissent avec un score de compatibilité détaillé.</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA BAS DE PAGE -->
+<section class="cta-section">
+    <div class="cta-inner">
+        <h2>Prêt à trouver votre partenaire idéal ?</h2>
+        <p>Inscrivez votre startup ou votre profil investisseur et lancez votre premier matching dès aujourd'hui.</p>
+        <div class="cta-buttons">
+            <a href="{{ url_for('nouvelle_entreprise') }}" class="btn btn-primary btn-lg">Inscrire une startup</a>
+            <a href="{{ url_for('nouveau_chef') }}" class="btn btn-outline btn-lg">Créer un profil investisseur</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,22 @@
+# Ignorer les fichiers inutiles pour le deploiement Vercel
+pgdata/
+__pycache__/
+*.pyc
+.env
+*.db
+*.sqlite
+RAPPORT_DE_TEST.md
+APPRENTISSAGE.md
+build_formation.py
+gen_guide.py
+generate_ultimate.py
+setup.bat
+config_dbeaver.py
+CONNECTPRO_FORMATION.html
+GUIDE_ULTIME.html
+dashboard_etudiant/
+test_*.py
+final_check.py
+check_dbeaver.py
+.obsidian/
+2026-05-16.md

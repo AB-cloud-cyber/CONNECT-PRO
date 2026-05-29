@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Matching Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <p class="section-eyebrow">Intelligence Relationnelle</p>
+        <h1 class="page-title">Tableau de Bord Matching</h1>
+        <p class="page-subtitle">Sélectionnez un profil pour calculer ses meilleures correspondances.</p>
+    </div>
+</div>
+
+<div class="matching-dashboard">
+    <!-- Chefs d'entreprise -->
+    <div class="matching-panel">
+        <div class="matching-panel-header chef-panel">
+            <span class="panel-icon">👤</span>
+            <h2>Investisseurs</h2>
+            <span class="panel-count">{{ chefs|length }}</span>
+        </div>
+        {% if chefs %}
+        <ul class="matching-list">
+            {% for c in chefs %}
+            <li class="matching-list-item">
+                <div class="matching-avatar chef-avatar sm">{{ c.nom_chef[0]|upper }}{{ c.prenom_chef[0]|upper }}</div>
+                <div class="matching-info">
+                    <strong>{{ c.prenom_chef }} {{ c.nom_chef }}</strong>
+                    <span class="profile-badge sm chef">{{ c.secteur_interet }}</span>
+                </div>
+                <a href="{{ url_for('matching_chef', cid=c.id) }}" class="btn btn-primary btn-sm">
+                    Matcher →
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="panel-empty">
+            <p>Aucun investisseur enregistré.</p>
+            <a href="{{ url_for('nouveau_chef') }}" class="btn btn-ghost btn-sm">+ Ajouter</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="matching-arrow-center">
+        <div class="matching-center-icon">◈</div>
+        <p>Algorithme<br>TF-IDF + Cosinus</p>
+    </div>
+
+    <!-- Startups -->
+    <div class="matching-panel">
+        <div class="matching-panel-header startup-panel">
+            <span class="panel-icon">🚀</span>
+            <h2>Startups</h2>
+            <span class="panel-count">{{ entreprises|length }}</span>
+        </div>
+        {% if entreprises %}
+        <ul class="matching-list">
+            {% for e in entreprises %}
+            <li class="matching-list-item">
+                <div class="matching-avatar startup-avatar sm">{{ e.nom_entreprise[0]|upper }}</div>
+                <div class="matching-info">
+                    <strong>{{ e.nom_entreprise }}</strong>
+                    <span class="profile-badge sm">{{ e.secteur }}</span>
+                </div>
+                <a href="{{ url_for('matching_startup', eid=e.id) }}" class="btn btn-primary btn-sm">
+                    Matcher →
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="panel-empty">
+            <p>Aucune startup enregistrée.</p>
+            <a href="{{ url_for('nouvelle_entreprise') }}" class="btn btn-ghost btn-sm">+ Ajouter</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

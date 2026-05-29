@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}{{ entreprise.nom_entreprise }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <p class="section-eyebrow"><a href="{{ url_for('liste_entreprises') }}">Startups</a> / Profil</p>
+        <h1 class="page-title">{{ entreprise.nom_entreprise }}</h1>
+    </div>
+    <div class="header-actions">
+        <a href="{{ url_for('modifier_entreprise', eid=entreprise.id) }}" class="btn btn-outline">Modifier</a>
+        <a href="{{ url_for('matching_startup', eid=entreprise.id) }}" class="btn btn-primary">Voir tous les matchs</a>
+    </div>
+</div>
+
+<div class="detail-layout">
+    <!-- Colonne gauche : infos -->
+    <aside class="detail-sidebar">
+        <div class="detail-card">
+            <div class="profile-avatar startup-avatar large">{{ entreprise.nom_entreprise[0]|upper }}</div>
+            <div class="detail-meta">
+                <span class="profile-badge large">{{ entreprise.secteur }}</span>
+            </div>
+
+            <dl class="info-list">
+                {% if entreprise.email_contact %}
+                <dt>Email</dt>
+                <dd><a href="mailto:{{ entreprise.email_contact }}">{{ entreprise.email_contact }}</a></dd>
+                {% endif %}
+                {% if entreprise.site_web %}
+                <dt>Site web</dt>
+                <dd><a href="{{ entreprise.site_web }}" target="_blank" rel="noopener">{{ entreprise.site_web }}</a></dd>
+                {% endif %}
+                {% if entreprise.localisation %}
+                <dt>Localisation</dt>
+                <dd>📍 {{ entreprise.localisation }}</dd>
+                {% endif %}
+                {% if entreprise.taille %}
+                <dt>Taille</dt>
+                <dd>{{ entreprise.taille }}</dd>
+                {% endif %}
+                {% if entreprise.annee_creation %}
+                <dt>Création</dt>
+                <dd>{{ entreprise.annee_creation }}</dd>
+                {% endif %}
+                {% if entreprise.date_enregistrement %}
+                <dt>Inscrit le</dt>
+                <dd>{{ entreprise.date_enregistrement.strftime('%d/%m/%Y') if entreprise.date_enregistrement else '—' }}</dd>
+                {% endif %}
+            </dl>
+
+            <form method="POST" action="{{ url_for('supprimer_entreprise', eid=entreprise.id) }}"
+                  onsubmit="return confirm('Supprimer définitivement cette entreprise ?');">
+                <button type="submit" class="btn btn-danger btn-sm btn-block">Supprimer</button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Colonne droite : description + matchs -->
+    <div class="detail-main">
+        {% if entreprise.description %}
+        <section class="detail-section">
+            <h2>Description</h2>
+            <p class="body-text">{{ entreprise.description }}</p>
+        </section>
+        {% endif %}
+
+        {% if entreprise.competences_offertes %}
+        <section class="detail-section">
+            <h2>Compétences offertes</h2>
+            <div class="skills-list">
+                {% for skill in entreprise.competences_offertes.split(',') %}
+                <span class="skill-tag">{{ skill.strip() }}</span>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if matches %}
+        <section class="detail-section">
+            <h2>Meilleures correspondances <span class="badge-count">{{ matches|length }}</span></h2>
+            <div class="mini-matches">
+                {% for m in matches %}
+                <div class="mini-match-card">
+                    <div class="mini-match-score">
+                        <span class="score-ring" style="--pct: {{ m.score }}">{{ m.score|int }}%</span>
+                    </div>
+                    <div class="mini-match-info">
+                        <strong>{{ m.nom_complet }}</strong>
+                        <span class="profile-badge sm">{{ m.secteur_interet }}</span>
+                        {% if m.competences_communes %}
+                        <p class="match-skills-hint">
+                            Commun : {{ m.competences_communes[:3]|join(', ') }}{% if m.competences_communes|length > 3 %}…{% endif %}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('detail_chef', cid=m.chef_id) }}" class="btn btn-ghost btn-sm">Voir →</a>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{{ url_for('matching_startup', eid=entreprise.id) }}" class="btn btn-outline mt-1">
+                Voir tous les matchs →
+            </a>
+        </section>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

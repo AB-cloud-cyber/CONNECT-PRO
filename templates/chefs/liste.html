@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Investisseurs{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <p class="section-eyebrow">Annuaire</p>
+        <h1 class="page-title">Investisseurs & Chefs d'Entreprise</h1>
+        <p class="page-subtitle">{{ chefs|length }} profil(s) enregistré(s)</p>
+    </div>
+    <a href="{{ url_for('nouveau_chef') }}" class="btn btn-primary">+ Nouveau profil</a>
+</div>
+
+{% if chefs %}
+<div class="cards-grid">
+    {% for c in chefs %}
+    <article class="profile-card">
+        <div class="profile-card-header">
+            <div class="profile-avatar chef-avatar">
+                {{ c.nom_chef[0]|upper }}{{ c.prenom_chef[0]|upper }}
+            </div>
+            <div class="profile-meta">
+                <span class="profile-badge chef">{{ c.secteur_interet }}</span>
+                {% if c.localisation %}
+                <span class="profile-location">📍 {{ c.localisation }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <h3 class="profile-name">{{ c.prenom_chef }} {{ c.nom_chef }}</h3>
+        <p class="profile-description">
+            {{ (c.description_profil or 'Aucune description disponible.')[:120] }}{% if c.description_profil and c.description_profil|length > 120 %}…{% endif %}
+        </p>
+        {% if c.competences_recherchees %}
+        <div class="skills-list">
+            {% for skill in c.competences_recherchees.split(',')[:4] %}
+            <span class="skill-tag chef-tag">{{ skill.strip() }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if c.budget_investissement %}
+        <p class="budget-badge">💰 {{ c.budget_investissement }}</p>
+        {% endif %}
+        <div class="profile-card-footer">
+            <a href="{{ url_for('detail_chef', cid=c.id) }}" class="btn btn-ghost btn-sm">Voir le profil</a>
+            <a href="{{ url_for('matching_chef', cid=c.id) }}" class="btn btn-primary btn-sm">Matcher →</a>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">👤</div>
+    <h2>Aucun investisseur inscrit</h2>
+    <p>Créez le premier profil investisseur sur la plateforme.</p>
+    <a href="{{ url_for('nouveau_chef') }}" class="btn btn-primary">Créer un profil</a>
+</div>
+{% endif %}
+{% endblock %}

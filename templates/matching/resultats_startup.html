@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Matchs — {{ entreprise.nom_entreprise }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <p class="section-eyebrow"><a href="{{ url_for('matching_dashboard') }}">Matching</a> / Résultats</p>
+        <h1 class="page-title">Matchs pour {{ entreprise.nom_entreprise }}</h1>
+        <p class="page-subtitle">
+            Secteur : <strong>{{ entreprise.secteur }}</strong>
+            {% if entreprise.localisation %} · 📍 {{ entreprise.localisation }}{% endif %}
+        </p>
+    </div>
+    <a href="{{ url_for('detail_entreprise', eid=entreprise.id) }}" class="btn btn-ghost">← Profil</a>
+</div>
+
+{% if matches %}
+<div class="score-legend">
+    <span class="legend-item"><span class="legend-dot high"></span> Excellent (≥70)</span>
+    <span class="legend-item"><span class="legend-dot med"></span> Bon (40–69)</span>
+    <span class="legend-item"><span class="legend-dot low"></span> Faible (&lt;40)</span>
+</div>
+
+<div class="match-results-grid">
+    {% for m in matches %}
+    {% set score_class = 'high' if m.score >= 70 else ('med' if m.score >= 40 else 'low') %}
+    <article class="match-result-card {{ score_class }}">
+        <div class="match-rank">#{{ loop.index }}</div>
+
+        <div class="score-display">
+            <svg class="score-circle" viewBox="0 0 80 80">
+                <circle class="score-bg" cx="40" cy="40" r="34"/>
+                <circle class="score-fill score-{{ score_class }}"
+                        cx="40" cy="40" r="34"
+                        stroke-dasharray="{{ (m.score / 100 * 213.6)|round(1) }} 213.6"
+                        stroke-dashoffset="53.4"/>
+                <text class="score-text" x="40" y="44" text-anchor="middle">{{ m.score|int }}%</text>
+            </svg>
+        </div>
+
+        <div class="match-body">
+            <h3>{{ m.nom_complet }}</h3>
+            <span class="profile-badge chef">{{ m.secteur_interet }}</span>
+            {% if m.localisation %}<span class="profile-location">📍 {{ m.localisation }}</span>{% endif %}
+            {% if m.budget_investissement %}<span class="budget-badge">💰 {{ m.budget_investissement }}</span>{% endif %}
+
+            {% if m.description_profil %}
+            <p class="match-desc">{{ m.description_profil[:150] }}{% if m.description_profil|length > 150 %}…{% endif %}</p>
+            {% endif %}
+
+            <div class="score-breakdown">
+                <div class="score-bar-row">
+                    <span>Secteur</span>
+                    <div class="score-bar"><div class="score-bar-fill" style="width: {{ [m.score_secteur / 50 * 100, 100]|min }}%"></div></div>
+                    <span class="score-val">{{ m.score_secteur|int }}pt</span>
+                </div>
+                <div class="score-bar-row">
+                    <span>Compétences</span>
+                    <div class="score-bar"><div class="score-bar-fill" style="width: {{ [m.score_competences / 30 * 100, 100]|min }}%"></div></div>
+                    <span class="score-val">{{ m.score_competences|int }}pt</span>
+                </div>
+                <div class="score-bar-row">
+                    <span>Localisation</span>
+                    <div class="score-bar"><div class="score-bar-fill" style="width: {{ [m.score_localisation / 15 * 100, 100]|min }}%"></div></div>
+                    <span class="score-val">{{ m.score_localisation|int }}pt</span>
+                </div>
+            </div>
+
+            {% if m.competences_communes %}
+            <div class="skills-list mt-1">
+                {% for skill in m.competences_communes[:5] %}
+                <span class="skill-tag accent">{{ skill }}</span>
+                {% endfor %}
+                {% if m.competences_communes|length > 5 %}
+                <span class="skill-tag muted">+{{ m.competences_communes|length - 5 }}</span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="match-actions">
+            <a href="mailto:{{ m.email_contact }}" class="btn btn-outline btn-sm">✉ Contacter</a>
+            <a href="{{ url_for('detail_chef', cid=m.chef_id) }}" class="btn btn-primary btn-sm">Voir le profil →</a>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <h2>Aucun match trouvé</h2>
+    <p>Inscrivez des investisseurs pour que l'algorithme puisse calculer des correspondances.</p>
+    <a href="{{ url_for('nouveau_chef') }}" class="btn btn-primary">Ajouter un investisseur</a>
+</div>
+{% endif %}
+{% endblock %}

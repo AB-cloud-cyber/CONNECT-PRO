@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# Environments
+.env
+.env.local
+.env.production
+
+# PostgreSQL
+pgdata/
+
+# Database
+*.db
+*.sqlite
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel (local project settings)
+.vercel/
+
+# Logs
+*.log
+
+# Test reports
+RAPPORT_DE_TEST.md
+APPRENTISSAGE.md

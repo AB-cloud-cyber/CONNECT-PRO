@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}{{ chef.prenom_chef }} {{ chef.nom_chef }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <p class="section-eyebrow"><a href="{{ url_for('liste_chefs') }}">Investisseurs</a> / Profil</p>
+        <h1 class="page-title">{{ chef.prenom_chef }} {{ chef.nom_chef }}</h1>
+    </div>
+    <div class="header-actions">
+        <a href="{{ url_for('modifier_chef', cid=chef.id) }}" class="btn btn-outline">Modifier</a>
+        <a href="{{ url_for('matching_chef', cid=chef.id) }}" class="btn btn-primary">Voir tous les matchs</a>
+    </div>
+</div>
+
+<div class="detail-layout">
+    <aside class="detail-sidebar">
+        <div class="detail-card">
+            <div class="profile-avatar chef-avatar large">
+                {{ chef.nom_chef[0]|upper }}{{ chef.prenom_chef[0]|upper }}
+            </div>
+            <div class="detail-meta">
+                <span class="profile-badge large chef">{{ chef.secteur_interet }}</span>
+            </div>
+
+            <dl class="info-list">
+                {% if chef.email_contact %}
+                <dt>Email</dt>
+                <dd><a href="mailto:{{ chef.email_contact }}">{{ chef.email_contact }}</a></dd>
+                {% endif %}
+                {% if chef.telephone %}
+                <dt>Téléphone</dt>
+                <dd>{{ chef.telephone }}</dd>
+                {% endif %}
+                {% if chef.localisation %}
+                <dt>Localisation</dt>
+                <dd>📍 {{ chef.localisation }}</dd>
+                {% endif %}
+                {% if chef.budget_investissement %}
+                <dt>Budget</dt>
+                <dd>💰 {{ chef.budget_investissement }}</dd>
+                {% endif %}
+                {% if chef.date_enregistrement %}
+                <dt>Inscrit le</dt>
+                <dd>{{ chef.date_enregistrement.strftime('%d/%m/%Y') if chef.date_enregistrement else '—' }}</dd>
+                {% endif %}
+            </dl>
+
+            <form method="POST" action="{{ url_for('supprimer_chef', cid=chef.id) }}"
+                  onsubmit="return confirm('Supprimer définitivement ce profil ?');">
+                <button type="submit" class="btn btn-danger btn-sm btn-block">Supprimer</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="detail-main">
+        {% if chef.description_profil %}
+        <section class="detail-section">
+            <h2>Profil</h2>
+            <p class="body-text">{{ chef.description_profil }}</p>
+        </section>
+        {% endif %}
+
+        {% if chef.competences_recherchees %}
+        <section class="detail-section">
+            <h2>Compétences recherchées</h2>
+            <div class="skills-list">
+                {% for skill in chef.competences_recherchees.split(',') %}
+                <span class="skill-tag chef-tag">{{ skill.strip() }}</span>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if matches %}
+        <section class="detail-section">
+            <h2>Meilleures startups correspondantes <span class="badge-count">{{ matches|length }}</span></h2>
+            <div class="mini-matches">
+                {% for m in matches %}
+                <div class="mini-match-card">
+                    <div class="mini-match-score">
+                        <span class="score-ring" style="--pct: {{ m.score }}">{{ m.score|int }}%</span>
+                    </div>
+                    <div class="mini-match-info">
+                        <strong>{{ m.nom_entreprise }}</strong>
+                        <span class="profile-badge sm">{{ m.secteur }}</span>
+                        {% if m.competences_communes %}
+                        <p class="match-skills-hint">
+                            Commun : {{ m.competences_communes[:3]|join(', ') }}{% if m.competences_communes|length > 3 %}…{% endif %}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('detail_entreprise', eid=m.startup_id) }}" class="btn btn-ghost btn-sm">Voir →</a>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{{ url_for('matching_chef', cid=chef.id) }}" class="btn btn-outline mt-1">
+                Voir tous les matchs →
+            </a>
+        </section>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

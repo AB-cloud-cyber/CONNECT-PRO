@@ -1,0 +1,27 @@
+{
+  "name": "ConnectPro — Plateforme de Mise en Relation",
+  "short_name": "ConnectPro",
+  "description": "Plateforme de matching intelligent entre startups et investisseurs en Afrique.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b1120",
+  "theme_color": "#0b1120",
+  "categories": ["business", "networking"],
+  "icons": [
+    {
+      "src": "/static/img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": []
+}

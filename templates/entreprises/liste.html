@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Startups{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+        <p class="section-eyebrow">Annuaire</p>
+        <h1 class="page-title">Startups & Entreprises</h1>
+        <p class="page-subtitle">{{ entreprises|length }} profil(s) enregistré(s)</p>
+    </div>
+    <a href="{{ url_for('nouvelle_entreprise') }}" class="btn btn-primary">+ Nouvelle startup</a>
+</div>
+
+{% if entreprises %}
+<div class="cards-grid">
+    {% for e in entreprises %}
+    <article class="profile-card">
+        <div class="profile-card-header">
+            <div class="profile-avatar startup-avatar">
+                {{ e.nom_entreprise[0]|upper }}
+            </div>
+            <div class="profile-meta">
+                <span class="profile-badge">{{ e.secteur }}</span>
+                {% if e.localisation %}
+                <span class="profile-location">📍 {{ e.localisation }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <h3 class="profile-name">{{ e.nom_entreprise }}</h3>
+        <p class="profile-description">
+            {{ (e.description or 'Aucune description disponible.')[:120] }}{% if e.description and e.description|length > 120 %}…{% endif %}
+        </p>
+        {% if e.competences_offertes %}
+        <div class="skills-list">
+            {% for skill in e.competences_offertes.split(',')[:4] %}
+            <span class="skill-tag">{{ skill.strip() }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="profile-card-footer">
+            <a href="{{ url_for('detail_entreprise', eid=e.id) }}" class="btn btn-ghost btn-sm">Voir le profil</a>
+            <a href="{{ url_for('matching_startup', eid=e.id) }}" class="btn btn-primary btn-sm">Matcher →</a>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">🏢</div>
+    <h2>Aucune startup inscrite</h2>
+    <p>Soyez le premier à inscrire votre entreprise sur la plateforme.</p>
+    <a href="{{ url_for('nouvelle_entreprise') }}" class="btn btn-primary">Inscrire une startup</a>
+</div>
+{% endif %}
+{% endblock %}
