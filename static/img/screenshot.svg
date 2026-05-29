@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1120"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#7dd3fc"/>
+    </linearGradient>
+    <linearGradient id="secondary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#a5b4fc"/>
+    </linearGradient>
+    <linearGradient id="success" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#6ee7b7"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="rgba(56,189,248,0.15)"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <circle cx="100" cy="100" r="180" fill="rgba(56,189,248,0.03)"/>
+  <circle cx="1150" cy="500" r="250" fill="rgba(129,140,248,0.03)"/>
+
+  <!-- Header Bar -->
+  <rect x="0" y="0" width="1280" height="60" fill="rgba(11,17,32,0.9)" stroke="rgba(56,189,248,0.08)" stroke-width="1"/>
+  <text x="40" y="38" font-family="Georgia, serif" font-size="22" font-weight="bold" fill="#38bdf8">&#9674; Connect</text>
+  <text x="135" y="38" font-family="Georgia, serif" font-size="22" font-weight="bold" fill="#f1f5f9">Pro</text>
+  <text x="280" y="38" font-family="system-ui, sans-serif" font-size="13" fill="#94a3b8" font-weight="500">Startups &nbsp;&nbsp;&nbsp; Investisseurs &nbsp;&nbsp;&nbsp; Matching</text>
+  <rect x="1040" y="15" width="100" height="30" rx="6" fill="none" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="1060" y="35" font-family="system-ui, sans-serif" font-size="12" fill="#38bdf8" font-weight="600">+ Startup</text>
+  <rect x="1150" y="15" width="100" height="30" rx="6" fill="#38bdf8"/>
+  <text x="1168" y="35" font-family="system-ui, sans-serif" font-size="12" fill="#0b1120" font-weight="700">+ Investisseur</text>
+
+  <!-- Hero Section -->
+  <text x="80" y="130" font-family="system-ui, sans-serif" font-size="11" fill="#38bdf8" font-weight="600" letter-spacing="3">PLATEFORME DE MISE EN RELATION</text>
+  <text x="80" y="180" font-family="Georgia, serif" font-size="42" fill="#f1f5f9" font-weight="bold">
+    <tspan x="80" dy="0">Connectez les</tspan>
+    <tspan x="80" dy="50">bonnes personnes <tspan fill="#38bdf8" font-style="italic">aux</tspan></tspan>
+    <tspan x="80" dy="50">bonnes startups</tspan>
+  </text>
+  <text x="80" y="330" font-family="system-ui, sans-serif" font-size="14" fill="#94a3b8">Notre algorithme de matching analyse les secteurs,</text>
+  <text x="80" y="350" font-family="system-ui, sans-serif" font-size="14" fill="#94a3b8">comp&eacute;tences et profils pour vous proposer les</text>
+  <text x="80" y="370" font-family="system-ui, sans-serif" font-size="14" fill="#94a3b8">meilleures mises en relation professionnelles.</text>
+
+  <!-- Right side - Network visualization -->
+  <circle cx="960" cy="240" r="130" fill="none" stroke="rgba(56,189,248,0.1)" stroke-width="1"/>
+  <circle cx="960" cy="240" r="90" fill="none" stroke="rgba(56,189,248,0.08)" stroke-width="1"/>
+  <!-- Nodes -->
+  <circle cx="890" cy="180" r="22" fill="rgba(56,189,248,0.15)" stroke="#38bdf8" stroke-width="2"/>
+  <text x="890" y="185" font-family="system-ui" font-size="14" fill="#38bdf8" text-anchor="middle" font-weight="bold">S1</text>
+  <circle cx="1020" cy="190" r="22" fill="rgba(56,189,248,0.15)" stroke="#38bdf8" stroke-width="2"/>
+  <text x="1020" y="195" font-family="system-ui" font-size="14" fill="#38bdf8" text-anchor="middle" font-weight="bold">S2</text>
+  <circle cx="920" cy="310" r="22" fill="rgba(129,140,248,0.15)" stroke="#818cf8" stroke-width="2"/>
+  <text x="920" y="315" font-family="system-ui" font-size="14" fill="#818cf8" text-anchor="middle" font-weight="bold">I1</text>
+  <circle cx="1020" cy="300" r="22" fill="rgba(129,140,248,0.15)" stroke="#818cf8" stroke-width="2"/>
+  <text x="1020" y="305" font-family="system-ui" font-size="14" fill="#818cf8" text-anchor="middle" font-weight="bold">I2</text>
+  <!-- Edges -->
+  <line x1="905" y1="200" x2="935" y2="290" stroke="rgba(56,189,248,0.3)" stroke-width="1.5"/>
+  <line x1="1035" y1="210" x2="1022" y2="278" stroke="rgba(56,189,248,0.3)" stroke-width="1.5"/>
+  <line x1="912" y1="200" x2="1000" y2="280" stroke="rgba(129,140,248,0.3)" stroke-width="1"/>
+  <line x1="890" y1="202" x2="890" y2="288" stroke="rgba(56,189,248,0.2)" stroke-width="1"/>
+
+  <!-- Stats Bar -->
+  <rect x="80" y="430" width="1120" height="70" rx="12" fill="#111827" stroke="rgba(56,189,248,0.08)" stroke-width="1"/>
+  <text x="260" y="465" font-family="Georgia, serif" font-size="30" fill="#38bdf8" text-anchor="middle" font-weight="bold">5</text>
+  <text x="260" y="488" font-family="system-ui" font-size="10" fill="#94a3b8" text-anchor="middle" letter-spacing="1">STARTUPS</text>
+  <line x1="460" y1="445" x2="460" y2="490" stroke="rgba(56,189,248,0.08)" stroke-width="1"/>
+  <text x="640" y="465" font-family="Georgia, serif" font-size="30" fill="#38bdf8" text-anchor="middle" font-weight="bold">4</text>
+  <text x="640" y="488" font-family="system-ui" font-size="10" fill="#94a3b8" text-anchor="middle" letter-spacing="1">INVESTISSEURS</text>
+  <line x1="840" y1="445" x2="840" y2="490" stroke="rgba(56,189,248,0.08)" stroke-width="1"/>
+  <text x="1020" y="465" font-family="Georgia, serif" font-size="30" fill="#38bdf8" text-anchor="middle" font-weight="bold">20</text>
+  <text x="1020" y="488" font-family="system-ui" font-size="10" fill="#94a3b8" text-anchor="middle" letter-spacing="1">MATCHS</text>
+
+  <!-- Bottom - Process Steps -->
+  <rect x="80" y="520" width="340" height="100" rx="10" fill="#111827" stroke="rgba(56,189,248,0.06)" stroke-width="1"/>
+  <text x="100" y="550" font-family="Georgia, serif" font-size="28" fill="rgba(56,189,248,0.2)" font-weight="bold">01</text>
+  <text x="150" y="550" font-family="system-ui" font-size="14" fill="#f1f5f9" font-weight="600">Inscrivez votre profil</text>
+  <text x="100" y="575" font-family="system-ui" font-size="11" fill="#94a3b8">Renseignez votre secteur, vos</text>
+  <text x="100" y="592" font-family="system-ui" font-size="11" fill="#94a3b8">comp&eacute;tences et vos objectifs.</text>
+
+  <rect x="470" y="520" width="340" height="100" rx="10" fill="#111827" stroke="rgba(56,189,248,0.06)" stroke-width="1"/>
+  <text x="490" y="550" font-family="Georgia, serif" font-size="28" fill="rgba(56,189,248,0.2)" font-weight="bold">02</text>
+  <text x="540" y="550" font-family="system-ui" font-size="14" fill="#f1f5f9" font-weight="600">Algorithme de matching</text>
+  <text x="490" y="575" font-family="system-ui" font-size="11" fill="#94a3b8">TF-IDF + similarit&eacute; cosinus</text>
+  <text x="490" y="592" font-family="system-ui" font-size="11" fill="#94a3b8">secteurs, comp&eacute;tences, localisation.</text>
+
+  <rect x="860" y="520" width="340" height="100" rx="10" fill="#111827" stroke="rgba(56,189,248,0.06)" stroke-width="1"/>
+  <text x="880" y="550" font-family="Georgia, serif" font-size="28" fill="rgba(56,189,248,0.2)" font-weight="bold">03</text>
+  <text x="930" y="550" font-family="system-ui" font-size="14" fill="#f1f5f9" font-weight="600">Recevez vos matchs</text>
+  <text x="880" y="575" font-family="system-ui" font-size="11" fill="#94a3b8">Profils compatibles avec score</text>
+  <text x="880" y="592" font-family="system-ui" font-size="11" fill="#94a3b8">d&eacute;taill&eacute; de compatibilit&eacute;.</text>
+</svg>
