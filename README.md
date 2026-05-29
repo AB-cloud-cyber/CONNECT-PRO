@@ -19,6 +19,16 @@
 
 ---
 
+## Captures d'écran
+
+| Accueil | Startups | Matching |
+|:-------:|:--------:|:--------:|
+| <img src="static/img/screenshot-home.png" width="300" alt="Page d'accueil"> | <img src="static/img/screenshot-startups.png" width="300" alt="Liste des startups"> | <img src="static/img/screenshot-matching.png" width="300" alt="Matching dashboard"> |
+
+[➡ Voir la démo live](https://connectpro-eight.vercel.app)
+
+---
+
 ## ✨ Fonctionnalités
 
 - **Dashboard interactif** — Vue globale des startups, investisseurs et matchs
