@@ -30,7 +30,7 @@
 ### Manuel
 ```bash
 # Cloner
-git clone https://github.com/AB-cloud-cyber/connectpro.git
+git clone https://github.com/AB-cloud-cyber/CONNECT-PRO.git
 cd connectpro
 
 # Configurer les variables d'environnement
@@ -64,4 +64,5 @@ vercel --prod
 ## ðŸ“ Licence
 
 MIT
+
 
