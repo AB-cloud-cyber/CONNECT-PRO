@@ -69,6 +69,51 @@ function FilterPills({ options, selected, onChange, label }) {
   );
 }
 
+/* ─── ILLUSTRATED EMPTY STATE ─── */
+function EmptyIllustration({ type }) {
+  const props = { width: 120, height: 90, style: { marginBottom: '0.5rem', opacity: 0.5 } };
+  if (type === 'search') return (
+    <svg {...props} viewBox="0 0 120 90" fill="none">
+      <circle cx="45" cy="40" r="22" stroke="var(--text-3)" strokeWidth="2" strokeDasharray="4 3" />
+      <line x1="60" y1="55" x2="75" y2="70" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="5 3" />
+      <line x1="23" y1="40" x2="67" y2="40" stroke="var(--accent)" strokeWidth="1" opacity="0.3" />
+      <line x1="45" y1="18" x2="45" y2="62" stroke="var(--accent)" strokeWidth="1" opacity="0.3" />
+    </svg>
+  );
+  if (type === 'startup') return (
+    <svg {...props} viewBox="0 0 120 90" fill="none">
+      <path d="M60 15 L90 30 L90 55 L60 70 L30 55 L30 30 Z" stroke="var(--text-3)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <path d="M60 35 L75 44 L75 56 L60 65 L45 56 L45 44 Z" stroke="var(--accent)" strokeWidth="1" opacity="0.2" />
+      <circle cx="60" cy="45" r="5" stroke="var(--accent)" strokeWidth="1" />
+      <line x1="60" y1="50" x2="60" y2="65" stroke="var(--accent)" strokeWidth="0.5" opacity="0.3" />
+    </svg>
+  );
+  if (type === 'chef') return (
+    <svg {...props} viewBox="0 0 120 90" fill="none">
+      <circle cx="55" cy="28" r="12" stroke="var(--text-3)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <path d="M35 68 Q35 45 55 45 Q75 45 75 68" stroke="var(--text-3)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <path d="M38 72 L72 72" stroke="var(--accent)" strokeWidth="1" opacity="0.2" strokeDasharray="3 3" />
+    </svg>
+  );
+  return (
+    <svg {...props} viewBox="0 0 120 90" fill="none">
+      <circle cx="60" cy="45" r="22" stroke="var(--text-3)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <path d="M60 35 L60 45 L68 50" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="60" cy="45" r="3" fill="var(--accent)" opacity="0.3" />
+    </svg>
+  );
+}
+function EmptyState({ type, title, desc, action }) {
+  return (
+    <div className="empty-state">
+      <EmptyIllustration type={type} />
+      <h2>{title || 'Aucun résultat'}</h2>
+      <p>{desc || 'Aucune donnée disponible pour le moment.'}</p>
+      {action && <div style={{ marginTop: '0.5rem' }}>{action}</div>}
+    </div>
+  );
+}
+
 /* ─── SKILL TAGS ─── */
 function SkillTags({ skills, variant }) {
   if (!skills || !skills.length) return null;
@@ -114,11 +159,7 @@ function MatchScoreCircle({ score, size }) {
 /* ─── MATCH RESULTS ─── */
 function MatchResults({ matches, type }) {
   if (!matches || !matches.length) return (
-    <div className="empty-state">
-      <div className="empty-icon">&#128202;</div>
-      <h2>Aucun résultat</h2>
-      <p>Aucun match trouvé pour ce profil.</p>
-    </div>
+    <EmptyState type="search" title="Aucun résultat" desc="Aucun match trouvé pour ce profil." />
   );
 
   return (
@@ -173,11 +214,35 @@ function MatchResults({ matches, type }) {
   );
 }
 
+/* ─── BOTTOM NAV (mobile) ─── */
+function BottomNav({ page, onNavigate }) {
+  const links = [
+    { key: 'home', label: 'Accueil', icon: '🏠' },
+    { key: 'startups', label: 'Startups', icon: '🚀' },
+    { key: 'chefs', label: 'Investisseurs', icon: '💼' },
+    { key: 'matching', label: 'Matching', icon: '🎯' },
+    { key: 'analytics', label: 'Analytics', icon: '📊' },
+  ];
+  const activePage = page === 'startup-detail' ? 'startups' : page === 'chef-detail' ? 'chefs' : page;
+  return (
+    <nav className="bottom-nav">
+      {links.map(l => (
+        <button key={l.key} className={`bottom-nav-btn${activePage === l.key ? ' active' : ''}`}
+          onClick={() => onNavigate(l.key)}>
+          <span className="nav-icon">{l.icon}</span>
+          <span className="nav-label">{l.label}</span>
+        </button>
+      ))}
+    </nav>
+  );
+}
+
 /* ─── NAVBAR ─── */
 function NavBar({ page, onNavigate }) {
   const [theme, setTheme] = useState(() => {
     return document.documentElement.classList.contains('light') ? 'light' : 'dark';
   });
+  const [menuOpen, setMenuOpen] = useState(false);
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     document.documentElement.classList.toggle('light');
@@ -191,23 +256,41 @@ function NavBar({ page, onNavigate }) {
     { key: 'analytics', label: 'Analytics' },
   ];
   const activePage = page === 'startup-detail' ? 'startups' : page === 'chef-detail' ? 'chefs' : page;
+  const handleNav = (key) => { onNavigate(key); setMenuOpen(false); };
   return (
-    <nav className="navbar">
-      <a className="navbar-brand" href="#" onClick={(e) => { e.preventDefault(); onNavigate('home'); }}>
-        <span className="brand-icon">&#x2B01;</span>
-        <span className="brand-text">Connect<strong>Pro</strong> <span className="brand-badge">v2</span></span>
-      </a>
-      <ul className="navbar-links">
-        {links.map((l) => (
-          <li key={l.key}>
-            <button className={`nav-link${activePage === l.key ? ' active' : ''}`}
-              onClick={() => onNavigate(l.key)}>{l.label}</button>
-          </li>
-        ))}
-      </ul>
-      <button className="btn btn-ghost btn-icon" onClick={toggleTheme} title={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
-        style={{ marginLeft: '0.5rem', fontSize: '1.1rem' }}>{theme === 'dark' ? '☀️' : '🌙'}</button>
-    </nav>
+    <>
+      <nav className="navbar">
+        <a className="navbar-brand" href="#" onClick={(e) => { e.preventDefault(); onNavigate('home'); }}>
+          <span className="brand-icon">&#x2B01;</span>
+          <span className="brand-text">Connect<strong>Pro</strong> <span className="brand-badge">v2</span></span>
+        </a>
+        <ul className="navbar-links">
+          {links.map((l) => (
+            <li key={l.key}>
+              <button className={`nav-link${activePage === l.key ? ' active' : ''}`}
+                onClick={() => handleNav(l.key)}>{l.label}</button>
+            </li>
+          ))}
+        </ul>
+        <button className="btn btn-ghost btn-icon theme-btn" onClick={toggleTheme} title={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
+          style={{ marginLeft: '0.5rem', fontSize: '1.1rem' }}>{theme === 'dark' ? '☀️' : '🌙'}</button>
+        <button className="btn btn-ghost btn-icon hamburger-btn" onClick={() => setMenuOpen(!menuOpen)}
+          style={{ fontSize: '1.3rem', display: 'none' }}>{menuOpen ? '✕' : '☰'}</button>
+      </nav>
+      {menuOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 99, background: 'var(--bg)', paddingTop: 'var(--nav-h)', display: 'flex', flexDirection: 'column' }}>
+          {links.map(l => (
+            <button key={l.key} className={`nav-link${activePage === l.key ? ' active' : ''}`}
+              style={{ padding: '1rem 2rem', fontSize: '1rem', borderBottom: '1px solid var(--border)', borderRadius: 0, display: 'block', textAlign: 'left', width: '100%' }}
+              onClick={() => handleNav(l.key)}>{l.label}</button>
+          ))}
+          <button className="nav-link" onClick={toggleTheme}
+            style={{ padding: '1rem 2rem', fontSize: '1rem', display: 'block', textAlign: 'left', width: '100%', color: 'var(--text-2)' }}>
+            {theme === 'dark' ? '☀️ Mode clair' : '🌙 Mode sombre'}
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -317,23 +400,54 @@ function HomePage() {
           </div>
         </div>
         <div className="hero-visual">
-          <div className="orb orb-1" /><div className="orb orb-2" />
-          <div className="orb-pulse"><div className="orb-pulse-inner" /></div>
-          <div className="network-container">
-            <div className="network-pulse" />
-            <svg viewBox="0 0 400 400">
-              <circle cx="200" cy="200" r="5" fill="#38bdf8" opacity="0.9" />
-              <circle cx="90" cy="110" r="3.5" fill="#7dd3fc" opacity="0.6" />
-              <circle cx="320" cy="130" r="3.5" fill="#7dd3fc" opacity="0.6" />
-              <circle cx="70" cy="300" r="3.5" fill="#7dd3fc" opacity="0.6" />
-              <circle cx="340" cy="280" r="3.5" fill="#7dd3fc" opacity="0.6" />
-              <circle cx="200" cy="350" r="2.5" fill="#94a3b8" opacity="0.4" />
-              <circle cx="200" cy="70" r="2.5" fill="#94a3b8" opacity="0.4" />
-              {[[200,200,90,110],[200,200,320,130],[200,200,70,300],[200,200,340,280],[200,200,200,70],[200,200,200,350],[90,110,320,130],[70,300,340,280]].map(([x1,y1,x2,y2],i) => (
-                <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#38bdf8" strokeWidth={i < 6 ? 0.8 : 0.4} opacity={i < 6 ? 0.35 : 0.15} />
+          <div className="orb orb-1" /><div className="orb orb-2" /><div className="orb orb-3" />
+          <div className="network-3d">
+            <svg viewBox="0 0 500 500" className="network-layer back">
+              <defs>
+                <radialGradient id="nodeGlow"><stop offset="0%" stopColor="#38bdf8" stopOpacity="0.8"/><stop offset="100%" stopColor="#38bdf8" stopOpacity="0"/></radialGradient>
+                <linearGradient id="lineFlow" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#38bdf8" stopOpacity="0"/><stop offset="50%" stopColor="#38bdf8" stopOpacity="0.25"/><stop offset="100%" stopColor="#38bdf8" stopOpacity="0"/></linearGradient>
+              </defs>
+              {/* Arrière-plan: connexions lointaines */}
+              {[[250,250,70,90],[250,250,430,90],[250,250,70,420],[250,250,430,420],[70,90,30,200],[430,90,470,320]].map(([x1,y1,x2,y2],i) => (
+                <line key={`b${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#38bdf8" strokeWidth="0.3" opacity="0.08" />
               ))}
-              {[[200,200,145,160],[200,200,260,170],[200,200,140,250],[200,200,270,240],[90,110,70,300],[320,130,340,280],[145,160,140,250],[260,170,270,240]].map(([x1,y1,x2,y2],i) => (
-                <line key={`d${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#38bdf8" strokeWidth="0.3" opacity="0.1" strokeDasharray="4 4" />
+              {/* Nœuds arrière */}
+              {[[70,90,3],[430,90,3],[70,420,3],[430,420,3],[30,200,2],[470,320,2],[110,290,2],[390,140,2]].map(([cx,cy,r],i) => (
+                <circle key={`bn${i}`} cx={cx} cy={cy} r={r} fill="#38bdf8" opacity="0.15" className={`node-pulse-${i}`} />
+              ))}
+            </svg>
+            <svg viewBox="0 0 500 500" className="network-layer mid">
+              {/* Connexions intermédiaires */}
+              {[[250,250,130,140],[250,250,370,140],[250,250,130,370],[250,250,370,370],[130,140,370,370],[370,140,130,370],[130,140,60,260],[370,140,440,260]].map(([x1,y1,x2,y2],i) => (
+                <line key={`m${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#38bdf8" strokeWidth={i < 6 ? 1 : 0.5} opacity={i < 4 ? 0.3 : 0.12} className={`line-flow-${i}`} strokeDasharray={i < 4 ? 'none' : '6 4'} />
+              ))}
+              {/* Bouclier orbital */}
+              <ellipse cx="250" cy="250" rx="160" ry="60" fill="none" stroke="rgba(56,189,248,0.06)" strokeWidth="1" transform="rotate(-20,250,250)" />
+              <ellipse cx="250" cy="250" rx="120" ry="45" fill="none" stroke="rgba(129,140,248,0.05)" strokeWidth="1" transform="rotate(30,250,250)" />
+              {/* Nœuds intermédiaires */}
+              {[[130,140,5.5,1],[370,140,5.5,0.5],[130,370,5.5,0.8],[370,370,5.5,0.3],[60,260,3.5,2],[440,260,3.5,1.5],[200,50,3,2.5],[300,450,3,1.8]].map(([cx,cy,r,d],i) => (
+                <g key={`mn${i}`} style={{ animationDelay: `${d}s` }}>
+                  <circle cx={cx} cy={cy} r={r+2} fill="url(#nodeGlow)" opacity="0.4" />
+                  <circle cx={cx} cy={cy} r={r} fill="#38bdf8" opacity="0.5" />
+                </g>
+              ))}
+            </svg>
+            <svg viewBox="0 0 500 500" className="network-layer front">
+              {/* Connexions principales */}
+              {[[250,250,200,180],[250,250,300,180],[250,250,190,330],[250,250,310,330],[200,180,300,180],[190,330,310,330],[200,180,190,330],[300,180,310,330]].map(([x1,y1,x2,y2],i) => (
+                <line key={`f${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke={i < 2 ? 'rgba(56,189,248,0.35)' : 'rgba(56,189,248,0.15)'} strokeWidth={i < 2 ? 1.5 : 0.8} className={`line-flow-${i}`} />
+              ))}
+              {/* Centre névralgique */}
+              <circle cx="250" cy="250" r="18" fill="url(#nodeGlow)" opacity="0.6" />
+              <circle cx="250" cy="250" r="8" fill="#38bdf8" opacity="0.9" />
+              <circle cx="250" cy="250" r="8" fill="none" stroke="#38bdf8" strokeWidth="1" opacity="0.5" className="center-pulse" />
+              {/* Nœuds avant */}
+              {[[200,180,7,0],[300,180,7,0.8],[190,330,7,1.6],[310,330,7,2.4],[145,240,4,1],[355,240,4,1.5],[250,110,4,2],[250,400,4,0.5]].map(([cx,cy,r,d],i) => (
+                <g key={`fn${i}`} style={{ animationDelay: `${d}s` }}>
+                  <circle cx={cx} cy={cy} r={r+3} fill="url(#nodeGlow)" opacity="0.5" />
+                  <circle cx={cx} cy={cy} r={r} fill="#7dd3fc" opacity="0.8" />
+                  <circle cx={cx} cy={cy} r={r+1} fill="none" stroke="#38bdf8" strokeWidth="0.5" opacity="0.4" className={`orbit-${i}`} />
+                </g>
               ))}
             </svg>
           </div>
@@ -385,6 +499,52 @@ function HomePage() {
             <h3>Recevez vos matchs</h3>
             <p>Les profils les plus compatibles apparaissent avec un score détaillé.</p>
           </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-header">
+          <p className="section-eyebrow">Fonctionnalités</p>
+          <h2 className="section-title">Tout ce dont vous avez besoin</h2>
+          <p className="section-subtitle">Une plateforme complète pour connecter startups et investisseurs</p>
+        </div>
+        <div className="features-grid">
+          {[
+            { icon: '🎯', title: 'Matching intelligent', desc: 'Algorithme TF-IDF multi-critères : secteur, compétences, localisation. Scores détaillés et classement automatique.' },
+            { icon: '📊', title: 'Analytiques embarquées', desc: 'Dashboard temps réel avec graphiques d\'évolution, répartition par score et visualisation des secteurs.' },
+            { icon: '🔒', title: 'Profils enrichis', desc: 'CV, compétences, badges, disponibilité. Import et analyse automatique de vos documents PDF.' },
+            { icon: '🌍', title: 'Focus Afrique', desc: 'Écosystème adapté au marché africain : matching local, secteurs clés, mise en réseau régionale.' },
+          ].map((f, i) => (
+            <div key={i} className="feature-card" style={{ animationDelay: `${i * 0.1}s` }}>
+              <div className="feature-icon">{f.icon}</div>
+              <h3>{f.title}</h3>
+              <p>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-header">
+          <p className="section-eyebrow">Témoignages</p>
+          <h2 className="section-title">Ils nous font confiance</h2>
+          <p className="section-subtitle">Des professionnels de l'écosystème africain</p>
+        </div>
+        <div className="testimonials-grid">
+          {[
+            { name: 'Amara K.', role: 'CEO, TechHub Abidjan', text: 'ConnectPro nous a permis de trouver 3 investisseurs alignés avec notre vision en moins de deux semaines. Le scoring est incroyablement précis.', avatar: 'A', stars: 5 },
+            { name: 'Fatima Z.', role: 'Investisseur, Casablanca', text: 'Enfin une plateforme qui comprend le marché africain. Les matchs sont pertinents et le dashboard me fait gagner un temps précieux.', avatar: 'F', stars: 5 },
+            { name: 'David M.', role: 'Founder, AgriTech Lagos', text: 'La fonction d\'analyse de CV et le matching sectoriel sont les meilleurs que j\'ai vus. Une vraie révolution pour le networking en Afrique.', avatar: 'D', stars: 4 },
+          ].map((t, i) => (
+            <div key={i} className="testimonial-card" style={{ animationDelay: `${i * 0.15}s` }}>
+              <div className="testimonial-stars">{'★'.repeat(t.stars)}{'☆'.repeat(5 - t.stars)}</div>
+              <p className="testimonial-text">{t.text}</p>
+              <div className="testimonial-author">
+                <div className="testimonial-avatar">{t.avatar}</div>
+                <div><strong>{t.name}</strong><span>{t.role}</span></div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>
@@ -446,11 +606,8 @@ function StartupsPage({ onNavigate }) {
         <FilterPills options={sectors} selected={filterSector} onChange={setFilterSector} label="Secteur" />
       )}
       {!filtered || !filtered.length ? (
-        <div className="empty-state">
-          <div className="empty-icon">&#127961;</div>
-          <h2>{search || filterSector ? 'Aucun résultat' : 'Aucune startup'}</h2>
-          <p>{search || filterSector ? 'Essayez de modifier vos filtres.' : 'Aucune startup n\'est encore inscrite sur la plateforme.'}</p>
-        </div>
+        <EmptyState type="startup" title={search || filterSector ? 'Aucun résultat' : 'Aucune startup'}
+          desc={search || filterSector ? 'Essayez de modifier vos filtres.' : 'Aucune startup n\'est encore inscrite sur la plateforme.'} />
       ) : (
         <div className="cards-grid">
           {filtered.map((e) => <ProfileCard key={e.id} item={e} type="startup" onNavigate={onNavigate} />)}
@@ -573,11 +730,8 @@ function ChefsPage({ onNavigate }) {
         <FilterPills options={sectors} selected={filterSector} onChange={setFilterSector} label="Secteur" />
       )}
       {!filtered || !filtered.length ? (
-        <div className="empty-state">
-          <div className="empty-icon">&#128100;</div>
-          <h2>{search || filterSector ? 'Aucun résultat' : 'Aucun investisseur'}</h2>
-          <p>{search || filterSector ? 'Essayez de modifier vos filtres.' : 'Aucun profil investisseur n\'est encore inscrit.'}</p>
-        </div>
+        <EmptyState type="chef" title={search || filterSector ? 'Aucun résultat' : 'Aucun investisseur'}
+          desc={search || filterSector ? 'Essayez de modifier vos filtres.' : 'Aucun profil investisseur n\'est encore inscrit.'} />
       ) : (
         <div className="cards-grid">
           {filtered.map((c) => <ProfileCard key={c.id} item={c} type="chef" onNavigate={onNavigate} />)}
@@ -781,11 +935,8 @@ function MatchingPage() {
       </div>
 
       {!selectedStartup && !selectedChef && (
-        <div className="empty-state" style={{ marginTop: '2rem' }}>
-          <div className="empty-icon">&#128257;</div>
-          <h2>Sélectionnez un profil</h2>
-          <p>Choisissez une startup <strong style={{ color: 'var(--accent)' }}>ou</strong> un investisseur dans les panneaux ci-dessus pour voir les matchs.</p>
-        </div>
+        <EmptyState type="default" title="Sélectionnez un profil"
+          desc={<>Choisissez une startup <strong style={{ color: 'var(--accent)' }}>ou</strong> un investisseur dans les panneaux ci-dessus pour voir les matchs.</>} />
       )}
 
       {loading && <div className="loading" style={{ marginTop: '2rem' }}><div className="spinner" /></div>}
@@ -983,6 +1134,7 @@ function App() {
   return (
     <>
       <NavBar page={page} onNavigate={navigate} />
+      <BottomNav page={page} onNavigate={navigate} />
       <div className="main-content">
         {content}
       </div>
