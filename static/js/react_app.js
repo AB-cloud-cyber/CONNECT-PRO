@@ -214,14 +214,65 @@ function MatchResults({ matches, type }) {
   );
 }
 
+/* ─── NOTIFICATION BELL ─── */
+function NotificationBell() {
+  const [open, setOpen] = useState(false);
+  const [notifs, setNotifs] = useState([]);
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      API('/api/notifications').then(d => {
+        if (d.status === 'ok') { setNotifs(d.notifications); setCount(d.unread || 0); }
+      }).catch(() => {});
+    }, 30000);
+    API('/api/notifications').catch(() => {});
+    return () => clearInterval(interval);
+  }, []);
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+  return (
+    <div className="notif-wrap" ref={ref}>
+      <button className={`notif-bell${open ? ' active' : ''}${count > 0 ? ' has-unread' : ''}`} onClick={() => setOpen(!open)}>
+        {'🔔'}{count > 0 && <span className="notif-dot" />}
+      </button>
+      {open && (
+        <div className="notif-dropdown">
+          <div className="notif-header">
+            <span>Notifications</span>
+            <button className="notif-clear" onClick={() => { setNotifs([]); setCount(0); }}>Tout marquer lu</button>
+          </div>
+          {!notifs.length ? (
+            <div className="notif-empty">Aucune notification rÃ©cente</div>
+          ) : (
+            notifs.map((n, i) => (
+              <div key={i} className="notif-item">
+                <div className="notif-item-icon">{n.icon || 'ð\u009f\u0094\ufffd'}</div>
+                <div className="notif-item-body">
+                  <div className="notif-item-title">{n.message}</div>
+                  <div className="notif-item-time">{n.time || 'Ã  l\'instant'}</div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── BOTTOM NAV (mobile) ─── */
 function BottomNav({ page, onNavigate }) {
   const links = [
-    { key: 'home', label: 'Accueil', icon: '🏠' },
-    { key: 'startups', label: 'Startups', icon: '🚀' },
-    { key: 'chefs', label: 'Investisseurs', icon: '💼' },
-    { key: 'matching', label: 'Matching', icon: '🎯' },
-    { key: 'analytics', label: 'Analytics', icon: '📊' },
+    { key: 'home', label: 'Accueil', icon: 'ð\x9F\x8F\xA0' },
+    { key: 'startups', label: 'Startups', icon: 'ð\x9F\x9A\x80' },
+    { key: 'chefs', label: 'Investisseurs', icon: 'ð\x9F\x92\xBC' },
+    { key: 'swipe', label: 'Swipe', icon: 'ð\x9F\x91\x8D' },
+    { key: 'network', label: 'RÃ©seau', icon: 'ð\x9F\x94\x97' },
+    { key: 'analytics', label: 'Stats', icon: 'ð\x9F\x93\x8A' },
   ];
   const activePage = page === 'startup-detail' ? 'startups' : page === 'chef-detail' ? 'chefs' : page;
   return (
@@ -252,7 +303,8 @@ function NavBar({ page, onNavigate }) {
     { key: 'home', label: 'Accueil' },
     { key: 'startups', label: 'Startups' },
     { key: 'chefs', label: 'Investisseurs' },
-    { key: 'matching', label: 'Matching' },
+    { key: 'swipe', label: 'Swipe' },
+    { key: 'network', label: 'RÃ©seau' },
     { key: 'analytics', label: 'Analytics' },
   ];
   const activePage = page === 'startup-detail' ? 'startups' : page === 'chef-detail' ? 'chefs' : page;
@@ -261,7 +313,7 @@ function NavBar({ page, onNavigate }) {
     <>
       <nav className="navbar">
         <a className="navbar-brand" href="#" onClick={(e) => { e.preventDefault(); onNavigate('home'); }}>
-          <span className="brand-icon">&#x2B01;</span>
+          <span className="brand-icon">â\x9E\x81</span>
           <span className="brand-text">Connect<strong>Pro</strong> <span className="brand-badge">v2</span></span>
         </a>
         <ul className="navbar-links">
@@ -272,10 +324,11 @@ function NavBar({ page, onNavigate }) {
             </li>
           ))}
         </ul>
+        <NotificationBell />
         <button className="btn btn-ghost btn-icon theme-btn" onClick={toggleTheme} title={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
-          style={{ marginLeft: '0.5rem', fontSize: '1.1rem' }}>{theme === 'dark' ? '☀️' : '🌙'}</button>
+          style={{ fontSize: '1.1rem' }}>{theme === 'dark' ? 'â\x98\x80' : 'ð\x9F\x8C\x99'}</button>
         <button className="btn btn-ghost btn-icon hamburger-btn" onClick={() => setMenuOpen(!menuOpen)}
-          style={{ fontSize: '1.3rem', display: 'none' }}>{menuOpen ? '✕' : '☰'}</button>
+          style={{ fontSize: '1.3rem', display: 'none' }}>{menuOpen ? 'âœ•' : 'â˜°'}</button>
       </nav>
       {menuOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 99, background: 'var(--bg)', paddingTop: 'var(--nav-h)', display: 'flex', flexDirection: 'column' }}>
@@ -286,7 +339,7 @@ function NavBar({ page, onNavigate }) {
           ))}
           <button className="nav-link" onClick={toggleTheme}
             style={{ padding: '1rem 2rem', fontSize: '1rem', display: 'block', textAlign: 'left', width: '100%', color: 'var(--text-2)' }}>
-            {theme === 'dark' ? '☀️ Mode clair' : '🌙 Mode sombre'}
+            {theme === 'dark' ? 'â˜€ Mode clair' : 'ð\x9F\x8C\x99 Mode sombre'}
           </button>
         </div>
       )}
@@ -1093,6 +1146,211 @@ function AnalyticsPage() {
   );
 }
 
+/* ─── SWIPE MATCHING (Tinder-style) ─── */
+function SwipeMatching() {
+  const [profiles, setProfiles] = useState(null);
+  const [index, setIndex] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [offsetX, setOffsetX] = useState(0);
+  const [decided, setDecided] = useState([]);
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    API('/api/entreprises').then(d => { if (d.status === 'ok' && d.entreprises.length) setProfiles(d.entreprises); });
+  }, []);
+
+  if (!profiles) return (
+    <div className="page-transition" style={{ display: 'flex', justifyContent: 'center', padding: '3rem 0' }}>
+      <div style={{ textAlign: 'center' }}>
+        <div className="spinner" />
+        <p style={{ color: 'var(--text-3)', marginTop: '1rem', fontSize: '0.85rem' }}>Chargement des profils...</p>
+      </div>
+    </div>
+  );
+
+  if (index >= profiles.length) return (
+    <div className="page-transition swipe-container">
+      <EmptyState type="search" title="Plus de profils" desc="Vous avez vu tous les profils disponibles. Revenez plus tard pour de nouveaux matchs !"
+        action={<button className="btn btn-primary" onClick={() => { setIndex(0); setDecided([]); }}>Recommencer</button>} />
+    </div>
+  );
+
+  const p = profiles[index];
+  const name = p.nom_entreprise;
+  const sector = p.secteur || '';
+  const desc = p.description || '';
+  const skills = (p.competences_offertes || '').split(',').map(s => s.trim()).filter(Boolean);
+  const rotate = (offsetX / 10);
+  const opacity = 1 - Math.min(Math.abs(offsetX) / 400, 0.5);
+  const likeShow = offsetX > 50;
+  const nopeShow = offsetX < -50;
+
+  const handleStart = (x) => { setDragging(true); setStartX(x); setOffsetX(0); };
+  const handleMove = (x) => { if (dragging) setOffsetX(x - startX); };
+  const handleEnd = () => {
+    setDragging(false);
+    if (Math.abs(offsetX) > 100) {
+      const liked = offsetX > 0;
+      setDecided([...decided, { name, sector, liked }]);
+      setIndex(index + 1);
+    }
+    setOffsetX(0);
+  };
+
+  return (
+    <div className="page-transition">
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Swipe Matching</h1>
+          <p className="page-subtitle">Glissez Ã  droite pour matcher, Ã  gauche pour passer</p>
+        </div>
+      </div>
+      <div className="swipe-container">
+        <div className="swipe-card-wrap"
+          onMouseDown={(e) => handleStart(e.clientX)}
+          onMouseMove={(e) => handleMove(e.clientX)}
+          onMouseUp={handleEnd}
+          onMouseLeave={() => { if (dragging) handleEnd(); }}
+          onTouchStart={(e) => handleStart(e.touches[0].clientX)}
+          onTouchMove={(e) => handleMove(e.touches[0].clientX)}
+          onTouchEnd={handleEnd}>
+          <div className={`swipe-card${dragging ? ' dragging' : ''}`}
+            ref={cardRef}
+            style={{ transform: `translateX(${offsetX}px) rotate(${rotate}deg)`, opacity }}>
+            <div className={`swipe-like${likeShow ? ' show' : ''}`}>MATCH</div>
+            <div className={`swipe-nope${nopeShow ? ' show' : ''}`}>PASSER</div>
+            <div className="swipe-avatar startup-avatar" style={{ width: 80, height: 80, fontSize: '2rem' }}>{name.charAt(0)}</div>
+            <div className="swipe-name">{name}</div>
+            {sector && <div className="swipe-sector">{sector}</div>}
+            <div className="swipe-desc">{desc || 'Aucune description'}</div>
+            {skills.length > 0 && (
+              <div className="swipe-tags">{skills.map((s, i) => <span key={i}>{s}</span>)}</div>
+            )}
+          </div>
+        </div>
+        <div className="swipe-actions">
+          <button className="swipe-btn nope" onClick={() => { setOffsetX(-300); setTimeout(() => { setOffsetX(0); setIndex(index + 1); setDecided([...decided, { name, sector, liked: false }]); }, 200); }}>âœ•</button>
+          <button className="swipe-btn super" onClick={() => { setOffsetX(0); }}>â­\90</button>
+          <button className="swipe-btn like" onClick={() => { setOffsetX(300); setTimeout(() => { setOffsetX(0); setIndex(index + 1); setDecided([...decided, { name, sector, liked: true }]); }, 200); }}>âœ\x93</button>
+        </div>
+        <div className="swipe-counter">
+          {profiles.slice(0, Math.min(profiles.length, 8)).map((_, i) => (
+            <span key={i} className={`count-dot${i === index ? ' active' : ''}`} />
+          ))}
+          {profiles.length > 8 && <span style={{ fontSize: '0.7rem', color: 'var(--text-3)' }}>+{profiles.length - 8}</span>}
+        </div>
+        {decided.length > 0 && (
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-2)', textAlign: 'center' }}>
+            {decided.filter(d => d.liked).length} match{decided.filter(d => d.liked).length > 1 ? 's' : ''} sur {decided.length} profils
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── FORCE GRAPH (D3.js) ─── */
+function ForceGraph() {
+  const [data, setData] = useState(null);
+  const [tip, setTip] = useState({ show: false, x: 0, y: 0, text: '' });
+  const svgRef = useRef(null);
+
+  useEffect(() => {
+    Promise.all([
+      API('/api/entreprises').then(d => d.status === 'ok' ? d.entreprises : []),
+      API('/api/chefs').then(d => d.status === 'ok' ? d.chefs : []),
+    ]).then(([startups, chefs]) => {
+      const nodes = [
+        ...startups.map(s => ({ id: 's-' + s.id, name: s.nom_entreprise, type: 'startup', sector: s.secteur })),
+        ...chefs.map(c => ({ id: 'c-' + c.id, name: `${c.prenom_chef || ''} ${c.nom_chef || ''}`.trim(), type: 'chef', sector: c.secteur_interet })),
+      ];
+      const links = [];
+      for (let i = 0; i < Math.min(nodes.length, 40); i++) {
+        for (let j = i + 1; j < Math.min(nodes.length, 40); j++) {
+          if (nodes[i].type !== nodes[j].type && Math.random() > 0.6) {
+            links.push({ source: nodes[i].id, target: nodes[j].id, value: Math.random() });
+          }
+        }
+      }
+      setData({ nodes, links });
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!data || !svgRef.current) return;
+    const svg = d3.select(svgRef.current);
+    svg.selectAll('*').remove();
+
+    const w = svgRef.current.parentElement.clientWidth || 800;
+    const h = 480;
+
+    const simulation = d3.forceSimulation(data.nodes)
+      .force('link', d3.forceLink(data.links).id(d => d.id).distance(100))
+      .force('charge', d3.forceManyBody().strength(-200))
+      .force('center', d3.forceCenter(w / 2, h / 2))
+      .force('collision', d3.forceCollide(30));
+
+    const link = svg.append('g').selectAll('line').data(data.links).join('line')
+      .attr('class', 'link').attr('stroke', '#38bdf8').attr('stroke-width', 0.5);
+
+    const node = svg.append('g').selectAll('g').data(data.nodes).join('g').attr('class', 'node')
+      .call(d3.drag()
+        .on('start', (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+        .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+        .on('end', (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+    node.append('circle')
+      .attr('r', d => d.type === 'startup' ? 8 : 6)
+      .attr('fill', d => d.type === 'startup' ? '#38bdf8' : '#818cf8');
+
+    node.append('text').text(d => d.name.length > 12 ? d.name.slice(0, 12) + '...' : d.name);
+
+    node.on('mouseenter', (e, d) => {
+      setTip({ show: true, x: e.offsetX + 12, y: e.offsetY - 8, text: `${d.name} (${d.sector || 'N/A'})` });
+    }).on('mouseleave', () => setTip({ show: false, x: 0, y: 0, text: '' }));
+
+    simulation.on('tick', () => {
+      link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+      node.attr('transform', d => `translate(${d.x},${d.y})`);
+    });
+
+    return () => simulation.stop();
+  }, [data]);
+
+  return (
+    <div className="page-transition">
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">RÃ©seau de connexions</h1>
+          <p className="page-subtitle">Visualisation interactive des relations startups-investisseurs</p>
+        </div>
+        <div className="header-actions">
+          <span className="profile-badge">D3.js Force Graph</span>
+        </div>
+      </div>
+      <div className="force-graph-wrap">
+        <div className="force-graph-legend">
+          <span><span className="lg-dot startup" /> Startup</span>
+          <span><span className="lg-dot chef" /> Investisseur</span>
+        </div>
+        <div className={`force-graph-tip${tip.show ? ' show' : ''}`} style={{ left: tip.x, top: tip.y }}>{tip.text}</div>
+        {!data ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+            <div className="spinner" />
+          </div>
+        ) : (
+          <svg ref={svgRef} />
+        )}
+      </div>
+      <div style={{ marginTop: '1rem', fontSize: '0.78rem', color: 'var(--text-3)', textAlign: 'center' }}>
+        {data ? `${data.nodes.length} connexions affichÃ©es — glissez les nÅ“uds pour explorer` : ''}
+      </div>
+    </div>
+  );
+}
+
 /* ─── APP ─── */
 function App() {
   const [page, setPage] = useState('home');
@@ -1126,6 +1384,12 @@ function App() {
       break;
     case 'analytics':
       content = <AnalyticsPage />;
+      break;
+    case 'swipe':
+      content = <SwipeMatching />;
+      break;
+    case 'network':
+      content = <ForceGraph />;
       break;
     default:
       content = <HomePage />;

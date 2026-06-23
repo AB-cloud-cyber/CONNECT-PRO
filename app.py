@@ -3,7 +3,9 @@ Plateforme de Mise en Relation Professionnelle
 Application Flask principale
 """
 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Response, stream_with_context
+import time
+import json
 from psycopg2 import Error
 
 from config.settings import SECRET_KEY, DEBUG
@@ -275,6 +277,25 @@ def api_stats():
         finally:
             conn.close()
     return jsonify({'status': 'ok', 'stats': stats})
+
+
+@app.route('/api/notifications')
+def api_notifications():
+    conn = get_db_connection()
+    notifs = []
+    if conn:
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT e.nom_entreprise, c.prenom_chef, c.nom_chef FROM entreprises e CROSS JOIN chefs_entreprise c ORDER BY RANDOM() LIMIT 3")
+            rows = cur.fetchall()
+            for row in rows:
+                notifs.append({'message': f"Nouveau match potentiel : {row[0]} \u2194 {row[1]} {row[2]}", 'icon': '\U0001f91d', 'time': 'il y a quelques minutes'})
+            cur.close()
+        except Exception:
+            pass
+        finally:
+            conn.close()
+    return jsonify({'status': 'ok', 'notifications': notifs, 'unread': len(notifs)})
 
 
 @app.route('/api/entreprises')
