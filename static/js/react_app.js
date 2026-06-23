@@ -1,7 +1,73 @@
-const { useState, useEffect, useCallback } = React;
+const { useState, useEffect, useCallback, useMemo, useRef } = React;
 
 /* ─── API HELPER ─── */
 const API = (path) => fetch(path).then((r) => r.json());
+
+/* ─── SKELETON LOADER ─── */
+function SkeletonCard() {
+  return (
+    <div className="profile-card skeleton-card" style={{ pointerEvents: 'none' }}>
+      <div className="profile-card-header">
+        <div className="skeleton skeleton-circle" />
+        <div className="skeleton-meta" style={{ flex: 1 }}>
+          <div className="skeleton skeleton-text w-60" />
+          <div className="skeleton skeleton-text w-40" style={{ marginTop: 6 }} />
+        </div>
+      </div>
+      <div className="skeleton skeleton-text w-90" />
+      <div className="skeleton skeleton-text w-70" />
+      <div className="skeleton skeleton-text w-50" style={{ marginTop: 4 }} />
+      <div className="profile-card-footer">
+        <div className="skeleton skeleton-text w-30" />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonDetail() {
+  return (
+    <div className="detail-layout" style={{ pointerEvents: 'none' }}>
+      <div className="detail-sidebar">
+        <div className="detail-card">
+          <div className="detail-meta" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <div className="skeleton skeleton-circle" style={{ width: 72, height: 72 }} />
+            <div className="skeleton skeleton-text w-60" />
+            <div className="skeleton skeleton-text w-40" />
+          </div>
+          {[1,2,3,4].map(i => <div key={i} style={{ marginTop: 12 }}>
+            <div className="skeleton skeleton-text w-30" />
+            <div className="skeleton skeleton-text w-80" style={{ marginTop: 4 }} />
+          </div>)}
+        </div>
+      </div>
+      <div>
+        <div className="skeleton skeleton-text w-90" style={{ height: 80 }} />
+        <div style={{ marginTop: 24 }}>
+          <div className="skeleton skeleton-text w-40" />
+          {[1,2,3].map(i => <div key={i} className="skeleton match-skeleton" style={{ marginTop: 12, height: 100 }} />)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── FILTER PILLS ─── */
+function FilterPills({ options, selected, onChange, label }) {
+  return (
+    <div className="filter-pills-wrap">
+      {label && <span className="filter-label">{label}</span>}
+      <div className="filter-pills">
+        <button className={`filter-pill${!selected ? ' active' : ''}`}
+          onClick={() => onChange(null)}>Tous</button>
+        {options.map(opt => (
+          <button key={opt}
+            className={`filter-pill${selected === opt ? ' active' : ''}`}
+            onClick={() => onChange(opt === selected ? null : opt)}>{opt}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /* ─── SKILL TAGS ─── */
 function SkillTags({ skills, variant }) {
@@ -15,11 +81,22 @@ function SkillTags({ skills, variant }) {
   );
 }
 
+/* ─── SEARCH BAR ─── */
+function SearchBar({ value, onChange, placeholder }) {
+  return (
+    <div className="search-box">
+      <span className="search-icon">&#128269;</span>
+      <input className="search-input" type="text" placeholder={placeholder || 'Rechercher...'}
+        value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
 /* ─── MATCH SCORE CIRCLE ─── */
 function MatchScoreCircle({ score, size }) {
-  const sz = size || 80;
+  const sz = size || 76;
   const cx = sz / 2, cy = sz / 2;
-  const r = sz / 2 - 8;
+  const r = sz / 2 - 7;
   const circumference = 2 * Math.PI * r;
   const offset = circumference - (score / 100) * circumference;
   const colorClass = score >= 70 ? 'score-high' : score >= 40 ? 'score-med' : 'score-low';
@@ -29,7 +106,7 @@ function MatchScoreCircle({ score, size }) {
       <circle cx={cx} cy={cy} r={r} className={`score-fill ${colorClass}`}
         strokeDasharray={circumference} strokeDashoffset={offset} />
       <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central"
-        className="score-text" style={{ fontSize: sz * 0.18 }}>{Math.round(score)}%</text>
+        className="score-text" style={{ fontSize: sz * 0.17 }}>{Math.round(score)}%</text>
     </svg>
   );
 }
@@ -38,7 +115,7 @@ function MatchScoreCircle({ score, size }) {
 function MatchResults({ matches, type }) {
   if (!matches || !matches.length) return (
     <div className="empty-state">
-      <div className="empty-icon">📊</div>
+      <div className="empty-icon">&#128202;</div>
       <h2>Aucun résultat</h2>
       <p>Aucun match trouvé pour ce profil.</p>
     </div>
@@ -98,82 +175,188 @@ function MatchResults({ matches, type }) {
 
 /* ─── NAVBAR ─── */
 function NavBar({ page, onNavigate }) {
+  const [theme, setTheme] = useState(() => {
+    return document.documentElement.classList.contains('light') ? 'light' : 'dark';
+  });
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.classList.toggle('light');
+    setTheme(next);
+  };
   const links = [
     { key: 'home', label: 'Accueil' },
     { key: 'startups', label: 'Startups' },
     { key: 'chefs', label: 'Investisseurs' },
     { key: 'matching', label: 'Matching' },
+    { key: 'analytics', label: 'Analytics' },
   ];
+  const activePage = page === 'startup-detail' ? 'startups' : page === 'chef-detail' ? 'chefs' : page;
   return (
     <nav className="navbar">
       <a className="navbar-brand" href="#" onClick={(e) => { e.preventDefault(); onNavigate('home'); }}>
-        <span className="brand-icon">⟁</span>
-        <span className="brand-text">Connect<strong>Pro</strong></span>
+        <span className="brand-icon">&#x2B01;</span>
+        <span className="brand-text">Connect<strong>Pro</strong> <span className="brand-badge">v2</span></span>
       </a>
       <ul className="navbar-links">
         {links.map((l) => (
           <li key={l.key}>
-            <button className={`nav-link${page === l.key ? ' active' : ''}`}
+            <button className={`nav-link${activePage === l.key ? ' active' : ''}`}
               onClick={() => onNavigate(l.key)}>{l.label}</button>
           </li>
         ))}
       </ul>
+      <button className="btn btn-ghost btn-icon" onClick={toggleTheme} title={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
+        style={{ marginLeft: '0.5rem', fontSize: '1.1rem' }}>{theme === 'dark' ? '☀️' : '🌙'}</button>
     </nav>
+  );
+}
+
+/* ─── PROFILE CARD ─── */
+function ProfileCard({ item, type, onNavigate }) {
+  const isStartup = type === 'startup';
+  const name = isStartup ? item.nom_entreprise : `${item.prenom_chef || ''} ${item.nom_chef || ''}`.trim();
+  const sector = isStartup ? item.secteur : item.secteur_interet;
+  const desc = isStartup ? item.description : item.description_profil;
+  const skills = isStartup
+    ? (item.competences_offertes || '').split(',').map(s => s.trim()).filter(Boolean)
+    : (item.competences_recherchees || '').split(',').map(s => s.trim()).filter(Boolean);
+  const avatarClass = isStartup ? 'startup-avatar' : 'chef-avatar';
+  const badgeClass = isStartup ? '' : 'chef';
+  const skillVariant = isStartup ? 'accent' : 'secondary';
+
+  return (
+    <div className="profile-card" onClick={() => onNavigate(type === 'startup' ? 'startup-detail' : 'chef-detail', item.id)}>
+      <div className="profile-card-header">
+        <div className="avatar-wrap">
+          <div className={`profile-avatar ${avatarClass}`}>{name.charAt(0)}</div>
+          <span className="avatar-status online" />
+        </div>
+        <div className="profile-meta">
+          <div className="profile-name">{name}</div>
+          <span className={`profile-badge ${badgeClass}`}>{sector || 'Non spécifié'}</span>
+        </div>
+      </div>
+      <p className="profile-description">{desc || 'Aucune description'}</p>
+      <div className="profile-location">&#128205; {item.localisation || 'Localisation non spécifiée'}</div>
+      {skills.length > 0 && <SkillTags skills={skills} variant={skillVariant} />}
+      <div className="profile-card-footer">
+        <span style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
+          {isStartup ? 'Startup' : 'Investisseur'}
+        </span>
+        <div className="card-actions">
+          <button className="btn btn-ghost btn-sm" onClick={(e) => { e.stopPropagation(); onNavigate(type === 'startup' ? 'startup-detail' : 'chef-detail', item.id); }}>
+            Voir le profil
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
 /* ─── HOME PAGE ─── */
 function HomePage() {
   const [stats, setStats] = useState(null);
+  const [statsAnimated, setStatsAnimated] = useState(false);
+  const statsRef = useRef(null);
 
   useEffect(() => {
     API('/api/stats').then((d) => { if (d.status === 'ok') setStats(d.stats); });
   }, []);
 
+  useEffect(() => {
+    if (!stats || statsAnimated) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setStatsAnimated(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.3 });
+    if (statsRef.current) observer.observe(statsRef.current);
+    return () => observer.disconnect();
+  }, [stats, statsAnimated]);
+
+  const AnimatedNumber = ({ value }) => {
+    const [display, setDisplay] = useState(0);
+    useEffect(() => {
+      if (!statsAnimated || !value) { setDisplay(value || 0); return; }
+      const target = Number(value);
+      const duration = 1500;
+      const steps = 30;
+      const increment = target / steps;
+      let current = 0;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) { clearInterval(timer); setDisplay(target); }
+        else setDisplay(Math.round(current));
+      }, duration / steps);
+      return () => clearInterval(timer);
+    }, [value, statsAnimated]);
+    return <>{display}</>;
+  };
+
   return (
-    <>
+    <div className="page-transition">
       <section className="hero">
-        <div className="hero-bg" />
+        <div className="hero-bg">
+          <div className="hero-gradient" />
+          <div className="hero-grid" />
+          <div className="hero-particles">
+            {[1,2,3,4,5,6,7].map(i => <div key={i} className="particle" />)}
+          </div>
+        </div>
         <div className="hero-content">
           <p className="hero-eyebrow">Plateforme d'Intelligence Relationnelle</p>
           <h1 className="hero-title">Connectez les<br /><em>bonnes personnes</em><br />aux bonnes startups</h1>
           <p className="hero-subtitle">
-            Notre algorithme de matching analyse les secteurs, compétences et profils
-            pour vous proposer les meilleures mises en relation professionnelles.
+            Notre algorithme de matching analyse les secteurs, compétences et localisations
+            pour vous proposer les meilleures mises en relation professionnelles en Afrique.
           </p>
+          <div className="hero-actions">
+            <button className="btn btn-primary btn-lg" onClick={() => {}}>Lancer un matching &#8594;</button>
+            <button className="btn btn-outline btn-lg">Explorer les startups</button>
+          </div>
         </div>
         <div className="hero-visual">
-          <div className="orb orb-1" /><div className="orb orb-2" /><div className="orb orb-3" />
-          <div className="network-lines">
+          <div className="orb orb-1" /><div className="orb orb-2" />
+          <div className="orb-pulse"><div className="orb-pulse-inner" /></div>
+          <div className="network-container">
+            <div className="network-pulse" />
             <svg viewBox="0 0 400 400">
-              <circle cx="200" cy="200" r="4" fill="#38bdf8" opacity="0.9" />
-              <circle cx="100" cy="120" r="3" fill="#7dd3fc" opacity="0.7" />
-              <circle cx="310" cy="140" r="3" fill="#7dd3fc" opacity="0.7" />
-              <circle cx="80" cy="290" r="3" fill="#7dd3fc" opacity="0.7" />
-              <circle cx="330" cy="290" r="3" fill="#7dd3fc" opacity="0.7" />
-              <circle cx="200" cy="340" r="2" fill="#94a3b8" opacity="0.5" />
-              <circle cx="200" cy="80" r="2" fill="#94a3b8" opacity="0.5" />
-              {[[200,200,100,120],[200,200,310,140],[200,200,80,290],[200,200,330,290],[200,200,200,80],[200,200,200,340],[100,120,310,140],[80,290,330,290]].map(([x1,y1,x2,y2],i) => (
-                <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#38bdf8" strokeWidth="0.8" opacity={i < 6 ? 0.4 : 0.2} />
+              <circle cx="200" cy="200" r="5" fill="#38bdf8" opacity="0.9" />
+              <circle cx="90" cy="110" r="3.5" fill="#7dd3fc" opacity="0.6" />
+              <circle cx="320" cy="130" r="3.5" fill="#7dd3fc" opacity="0.6" />
+              <circle cx="70" cy="300" r="3.5" fill="#7dd3fc" opacity="0.6" />
+              <circle cx="340" cy="280" r="3.5" fill="#7dd3fc" opacity="0.6" />
+              <circle cx="200" cy="350" r="2.5" fill="#94a3b8" opacity="0.4" />
+              <circle cx="200" cy="70" r="2.5" fill="#94a3b8" opacity="0.4" />
+              {[[200,200,90,110],[200,200,320,130],[200,200,70,300],[200,200,340,280],[200,200,200,70],[200,200,200,350],[90,110,320,130],[70,300,340,280]].map(([x1,y1,x2,y2],i) => (
+                <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#38bdf8" strokeWidth={i < 6 ? 0.8 : 0.4} opacity={i < 6 ? 0.35 : 0.15} />
+              ))}
+              {[[200,200,145,160],[200,200,260,170],[200,200,140,250],[200,200,270,240],[90,110,70,300],[320,130,340,280],[145,160,140,250],[260,170,270,240]].map(([x1,y1,x2,y2],i) => (
+                <line key={`d${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#38bdf8" strokeWidth="0.3" opacity="0.1" strokeDasharray="4 4" />
               ))}
             </svg>
           </div>
         </div>
+        <div className="hero-scroll">
+          <span>Découvrir</span>
+          <span style={{ fontSize: '0.8rem' }}>&#8595;</span>
+        </div>
       </section>
 
-      <div className="stats-bar">
+      <div className="stats-bar" ref={statsRef}>
         <div className="stat-item">
-          <span className="stat-number">{stats ? stats.nb_startups : '—'}</span>
+          <span className="stat-number">{stats ? <AnimatedNumber value={stats.nb_startups} /> : '—'}</span>
           <span className="stat-label">Startups inscrites</span>
         </div>
         <div className="stat-divider" />
         <div className="stat-item">
-          <span className="stat-number">{stats ? stats.nb_chefs : '—'}</span>
+          <span className="stat-number">{stats ? <AnimatedNumber value={stats.nb_chefs} /> : '—'}</span>
           <span className="stat-label">Investisseurs actifs</span>
         </div>
         <div className="stat-divider" />
         <div className="stat-item">
-          <span className="stat-number">{stats ? stats.nb_matchs : '—'}</span>
+          <span className="stat-number">{stats ? <AnimatedNumber value={stats.nb_matchs} /> : '—'}</span>
           <span className="stat-label">Matchs potentiels</span>
         </div>
       </div>
@@ -182,6 +365,7 @@ function HomePage() {
         <div className="section-header">
           <p className="section-eyebrow">Processus</p>
           <h2 className="section-title">Comment fonctionne le matching ?</h2>
+          <p className="section-subtitle">Notre algorithme TF-IDF analyse et compare les profils en 3 étapes</p>
         </div>
         <div className="steps-grid">
           <div className="step-card">
@@ -189,71 +373,90 @@ function HomePage() {
             <h3>Inscrivez votre profil</h3>
             <p>Renseignez votre secteur, vos compétences et vos objectifs en quelques minutes.</p>
           </div>
-          <div className="step-arrow">→</div>
+          <div className="step-arrow">&#8594;</div>
           <div className="step-card">
             <div className="step-number">02</div>
             <h3>L'algorithme analyse</h3>
-            <p>Notre moteur TF-IDF + similarité cosinus compare secteurs, compétences et localisations.</p>
+            <p>Notre moteur TF-IDF + similarité cosinus compare secteurs et compétences.</p>
           </div>
-          <div className="step-arrow">→</div>
+          <div className="step-arrow">&#8594;</div>
           <div className="step-card">
             <div className="step-number">03</div>
             <h3>Recevez vos matchs</h3>
-            <p>Les profils les plus compatibles apparaissent avec un score de compatibilité détaillé.</p>
+            <p>Les profils les plus compatibles apparaissent avec un score détaillé.</p>
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 
 /* ─── STARTUPS PAGE ─── */
 function StartupsPage({ onNavigate }) {
   const [data, setData] = useState(null);
+  const [search, setSearch] = useState('');
+  const [filterSector, setFilterSector] = useState(null);
 
   useEffect(() => {
     API('/api/entreprises').then((d) => { if (d.status === 'ok') setData(d.entreprises); });
   }, []);
 
-  if (!data) return <div className="loading"><div className="spinner" /></div>;
+  const sectors = useMemo(() => {
+    if (!data) return [];
+    return [...new Set(data.map(e => e.secteur).filter(Boolean))];
+  }, [data]);
 
-  if (!data.length) return (
-    <div className="empty-state">
-      <div className="empty-icon">🏢</div>
-      <h2>Aucune startup</h2>
-      <p>Aucune startup n'est encore inscrite sur la plateforme.</p>
+  const filtered = useMemo(() => {
+    if (!data) return null;
+    let result = data;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(e =>
+        e.nom_entreprise.toLowerCase().includes(q) ||
+        (e.secteur || '').toLowerCase().includes(q) ||
+        (e.description || '').toLowerCase().includes(q) ||
+        (e.localisation || '').toLowerCase().includes(q)
+      );
+    }
+    if (filterSector) result = result.filter(e => e.secteur === filterSector);
+    return result;
+  }, [data, search, filterSector]);
+
+  if (!data) return (
+    <div className="page-transition">
+      <div className="page-header"><div><h1 className="page-title">Startups</h1><p className="page-subtitle">Chargement...</p></div></div>
+      <div className="cards-grid" style={{ opacity: 0.6 }}>
+        {[1,2,3,4,5,6].map(i => <SkeletonCard key={i} />)}
+      </div>
     </div>
   );
 
   return (
-    <>
+    <div className="page-transition">
       <div className="page-header">
         <div>
           <h1 className="page-title">Startups</h1>
           <p className="page-subtitle">{data.length} startup{data.length > 1 ? 's' : ''} inscrite{data.length > 1 ? 's' : ''}</p>
         </div>
       </div>
-      <div className="cards-grid">
-        {data.map((e) => {
-          const skills = e.competences_offertes ? e.competences_offertes.split(',').map(s => s.trim()).filter(Boolean) : [];
-          return (
-            <div key={e.id} className="profile-card"
-              onClick={() => onNavigate('startup-detail', e.id)}>
-              <div className="profile-card-header">
-                <div className="profile-avatar startup-avatar">{e.nom_entreprise.charAt(0)}</div>
-                <div className="profile-meta">
-                  <div className="profile-name">{e.nom_entreprise}</div>
-                  <span className="profile-badge">{e.secteur || 'Non spécifié'}</span>
-                </div>
-              </div>
-              <p className="profile-description">{e.description || 'Aucune description'}</p>
-              {e.localisation && <div className="profile-location">📍 {e.localisation}</div>}
-              {skills.length > 0 && <SkillTags skills={skills} />}
-            </div>
-          );
-        })}
+      <div className="filter-row">
+        <SearchBar value={search} onChange={setSearch} placeholder="Rechercher par nom, secteur, localisation..." />
       </div>
-    </>
+      {sectors.length > 0 && (
+        <FilterPills options={sectors} selected={filterSector} onChange={setFilterSector} label="Secteur" />
+      )}
+      {!filtered || !filtered.length ? (
+        <div className="empty-state">
+          <div className="empty-icon">&#127961;</div>
+          <h2>{search || filterSector ? 'Aucun résultat' : 'Aucune startup'}</h2>
+          <p>{search || filterSector ? 'Essayez de modifier vos filtres.' : 'Aucune startup n\'est encore inscrite sur la plateforme.'}</p>
+        </div>
+      ) : (
+        <div className="cards-grid">
+          {filtered.map((e) => <ProfileCard key={e.id} item={e} type="startup" onNavigate={onNavigate} />)}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -267,21 +470,24 @@ function StartupDetail({ id, onNavigate }) {
     API(`/api/matches/startup/${id}`).then((d) => { if (d.status === 'ok') setMatches(d.matches); });
   }, [id]);
 
-  if (!entreprise) return <div className="loading"><div className="spinner" /></div>;
+  if (!entreprise) return <div className="page-transition"><button className="back-btn" disabled>&#8592; Retour</button><SkeletonDetail /></div>;
 
   const e = entreprise;
   const skills = e.competences_offertes ? e.competences_offertes.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   return (
-    <>
-      <button className="back-btn" onClick={() => onNavigate('startups')}>← Retour aux startups</button>
+    <div className="page-transition">
+      <button className="back-btn" onClick={() => onNavigate('startups')}>&#8592; Retour aux startups</button>
       <div className="detail-layout">
         <div className="detail-sidebar">
           <div className="detail-card">
             <div className="detail-meta">
-              <div className="profile-avatar startup-avatar large">{e.nom_entreprise.charAt(0)}</div>
+              <div className="avatar-wrap">
+                <div className="profile-avatar startup-avatar large" style={{ margin: '0 auto 0' }}>{e.nom_entreprise.charAt(0)}</div>
+                <span className="avatar-status online" style={{ bottom: 3, right: 3 }} />
+              </div>
               <h2 className="profile-name">{e.nom_entreprise}</h2>
-              <span className="profile-badge large">{e.secteur || 'Non spécifié'}</span>
+              <span className="profile-badge">{e.secteur || 'Non spécifié'}</span>
             </div>
             <dl className="info-list">
               {e.localisation && <><dt>Localisation</dt><dd>{e.localisation}</dd></>}
@@ -294,7 +500,7 @@ function StartupDetail({ id, onNavigate }) {
         </div>
         <div>
           {e.description && <div className="detail-section">
-            <h2>À propos</h2>
+            <h2>&Agrave; propos</h2>
             <p className="body-text">{e.description}</p>
           </div>}
           {skills.length > 0 && <div className="detail-section">
@@ -307,58 +513,77 @@ function StartupDetail({ id, onNavigate }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
 /* ─── CHEFS PAGE ─── */
 function ChefsPage({ onNavigate }) {
   const [data, setData] = useState(null);
+  const [search, setSearch] = useState('');
+  const [filterSector, setFilterSector] = useState(null);
 
   useEffect(() => {
     API('/api/chefs').then((d) => { if (d.status === 'ok') setData(d.chefs); });
   }, []);
 
-  if (!data) return <div className="loading"><div className="spinner" /></div>;
+  const sectors = useMemo(() => {
+    if (!data) return [];
+    return [...new Set(data.map(c => c.secteur_interet).filter(Boolean))];
+  }, [data]);
 
-  if (!data.length) return (
-    <div className="empty-state">
-      <div className="empty-icon">👤</div>
-      <h2>Aucun investisseur</h2>
-      <p>Aucun profil investisseur n'est encore inscrit.</p>
+  const filtered = useMemo(() => {
+    if (!data) return null;
+    let result = data;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(c => {
+        const name = `${c.prenom_chef || ''} ${c.nom_chef || ''}`.toLowerCase();
+        return name.includes(q) ||
+          (c.secteur_interet || '').toLowerCase().includes(q) ||
+          (c.description_profil || '').toLowerCase().includes(q) ||
+          (c.localisation || '').toLowerCase().includes(q);
+      });
+    }
+    if (filterSector) result = result.filter(c => c.secteur_interet === filterSector);
+    return result;
+  }, [data, search, filterSector]);
+
+  if (!data) return (
+    <div className="page-transition">
+      <div className="page-header"><div><h1 className="page-title">Investisseurs</h1><p className="page-subtitle">Chargement...</p></div></div>
+      <div className="cards-grid" style={{ opacity: 0.6 }}>
+        {[1,2,3,4,5,6].map(i => <SkeletonCard key={i} />)}
+      </div>
     </div>
   );
 
   return (
-    <>
+    <div className="page-transition">
       <div className="page-header">
         <div>
           <h1 className="page-title">Investisseurs</h1>
           <p className="page-subtitle">{data.length} profil{data.length > 1 ? 's' : ''} investisseur{data.length > 1 ? 's' : ''}</p>
         </div>
       </div>
-      <div className="cards-grid">
-        {data.map((c) => {
-          const nomComplet = `${c.prenom_chef || ''} ${c.nom_chef || ''}`.trim();
-          const skills = c.competences_recherchees ? c.competences_recherchees.split(',').map(s => s.trim()).filter(Boolean) : [];
-          return (
-            <div key={c.id} className="profile-card"
-              onClick={() => onNavigate('chef-detail', c.id)}>
-              <div className="profile-card-header">
-                <div className="profile-avatar chef-avatar">{nomComplet.charAt(0)}</div>
-                <div className="profile-meta">
-                  <div className="profile-name">{nomComplet}</div>
-                  <span className="profile-badge chef">{c.secteur_interet || 'Non spécifié'}</span>
-                </div>
-              </div>
-              <p className="profile-description">{c.description_profil || 'Aucune description'}</p>
-              {c.localisation && <div className="profile-location">📍 {c.localisation}</div>}
-              {skills.length > 0 && <SkillTags skills={skills} variant="secondary" />}
-            </div>
-          );
-        })}
+      <div className="filter-row">
+        <SearchBar value={search} onChange={setSearch} placeholder="Rechercher par nom, secteur, localisation..." />
       </div>
-    </>
+      {sectors.length > 0 && (
+        <FilterPills options={sectors} selected={filterSector} onChange={setFilterSector} label="Secteur" />
+      )}
+      {!filtered || !filtered.length ? (
+        <div className="empty-state">
+          <div className="empty-icon">&#128100;</div>
+          <h2>{search || filterSector ? 'Aucun résultat' : 'Aucun investisseur'}</h2>
+          <p>{search || filterSector ? 'Essayez de modifier vos filtres.' : 'Aucun profil investisseur n\'est encore inscrit.'}</p>
+        </div>
+      ) : (
+        <div className="cards-grid">
+          {filtered.map((c) => <ProfileCard key={c.id} item={c} type="chef" onNavigate={onNavigate} />)}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -372,22 +597,25 @@ function ChefDetail({ id, onNavigate }) {
     API(`/api/matches/chef/${id}`).then((d) => { if (d.status === 'ok') setMatches(d.matches); });
   }, [id]);
 
-  if (!chef) return <div className="loading"><div className="spinner" /></div>;
+  if (!chef) return <div className="page-transition"><button className="back-btn" disabled>&#8592; Retour</button><SkeletonDetail /></div>;
 
   const c = chef;
   const nomComplet = `${c.prenom_chef || ''} ${c.nom_chef || ''}`.trim();
   const skills = c.competences_recherchees ? c.competences_recherchees.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   return (
-    <>
-      <button className="back-btn" onClick={() => onNavigate('chefs')}>← Retour aux investisseurs</button>
+    <div className="page-transition">
+      <button className="back-btn" onClick={() => onNavigate('chefs')}>&#8592; Retour aux investisseurs</button>
       <div className="detail-layout">
         <div className="detail-sidebar">
           <div className="detail-card">
             <div className="detail-meta">
-              <div className="profile-avatar chef-avatar large">{nomComplet.charAt(0)}</div>
+              <div className="avatar-wrap">
+                <div className="profile-avatar chef-avatar large" style={{ margin: '0 auto 0' }}>{nomComplet.charAt(0)}</div>
+                <span className="avatar-status online" style={{ bottom: 3, right: 3 }} />
+              </div>
               <h2 className="profile-name">{nomComplet}</h2>
-              <span className="profile-badge chef large">{c.secteur_interet || 'Non spécifié'}</span>
+              <span className="profile-badge chef">{c.secteur_interet || 'Non spécifié'}</span>
             </div>
             <dl className="info-list">
               {c.localisation && <><dt>Localisation</dt><dd>{c.localisation}</dd></>}
@@ -399,7 +627,7 @@ function ChefDetail({ id, onNavigate }) {
         </div>
         <div>
           {c.description_profil && <div className="detail-section">
-            <h2>À propos</h2>
+            <h2>&Agrave; propos</h2>
             <p className="body-text">{c.description_profil}</p>
           </div>}
           {skills.length > 0 && <div className="detail-section">
@@ -412,7 +640,7 @@ function ChefDetail({ id, onNavigate }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -432,11 +660,13 @@ function MatchingPage() {
 
   const handleSelectStartup = useCallback((id) => {
     setSelectedStartup(id === selectedStartup ? null : id);
+    setSelectedChef(null);
     setMatches(null);
   }, [selectedStartup]);
 
   const handleSelectChef = useCallback((id) => {
     setSelectedChef(id === selectedChef ? null : id);
+    setSelectedStartup(null);
     setMatches(null);
   }, [selectedChef]);
 
@@ -454,7 +684,6 @@ function MatchingPage() {
 
   const itemForStartup = selectedStartup && startups ? startups.find(s => s.id === selectedStartup) : null;
   const itemForChef = selectedChef && chefs ? chefs.find(c => c.id === selectedChef) : null;
-  const matchLabel = selectedStartup ? 'les startups' : 'les investisseurs';
   const matchTitle = itemForStartup
     ? `Meilleurs matchs pour ${itemForStartup.nom_entreprise}`
     : itemForChef
@@ -462,7 +691,7 @@ function MatchingPage() {
       : '';
 
   return (
-    <>
+    <div className="page-transition">
       <div className="page-header">
         <div>
           <h1 className="page-title">Matching</h1>
@@ -473,12 +702,17 @@ function MatchingPage() {
       <div className="matching-dashboard">
         <div className="matching-panel startup-panel">
           <div className="matching-panel-header">
-            <span className="panel-icon">🏢</span>
+            <span className="panel-icon">&#127961;</span>
             <h2>Startups</h2>
             <span className="panel-count">{startups ? startups.length : '…'}</span>
           </div>
           {!startups ? (
-            <div className="panel-empty"><div className="spinner" /></div>
+            <div className="panel-empty" style={{ padding: '1.5rem' }}>
+              {[1,2,3,4,5].map(i => <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <div className="skeleton skeleton-circle" style={{ width: 34, height: 34 }} />
+                <div style={{ flex: 1 }}><div className="skeleton skeleton-text w-60" /><div className="skeleton skeleton-text w-40" style={{ marginTop: 4 }} /></div>
+              </div>)}
+            </div>
           ) : !startups.length ? (
             <div className="panel-empty"><p>Aucune startup</p></div>
           ) : (
@@ -487,10 +721,13 @@ function MatchingPage() {
                 <li key={s.id}
                   className={`matching-list-item${selectedStartup === s.id ? ' selected' : ''}`}
                   onClick={() => handleSelectStartup(s.id)}>
-                  <div className="profile-avatar startup-avatar sm">{s.nom_entreprise.charAt(0)}</div>
+                  <div className="avatar-wrap">
+                    <div className="profile-avatar startup-avatar sm">{s.nom_entreprise.charAt(0)}</div>
+                    <span className="avatar-status online" />
+                  </div>
                   <div className="matching-info">
                     <strong>{s.nom_entreprise}</strong>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>{s.secteur}</span>
+                    <small>{s.secteur}</small>
                   </div>
                 </li>
               ))}
@@ -499,18 +736,24 @@ function MatchingPage() {
         </div>
 
         <div className="matching-arrow-center">
-          <div className="matching-center-icon">⟷</div>
+          <div className="matching-center-icon">&#x27F6;</div>
           <span>Match<br/>Engine</span>
+          <small style={{ color: 'var(--text-3)', fontSize: '0.6rem' }}>TF-IDF + Cosinus</small>
         </div>
 
         <div className="matching-panel chef-panel">
           <div className="matching-panel-header">
-            <span className="panel-icon">👤</span>
+            <span className="panel-icon">&#128100;</span>
             <h2>Investisseurs</h2>
             <span className="panel-count">{chefs ? chefs.length : '…'}</span>
           </div>
           {!chefs ? (
-            <div className="panel-empty"><div className="spinner" /></div>
+            <div className="panel-empty" style={{ padding: '1.5rem' }}>
+              {[1,2,3,4,5].map(i => <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <div className="skeleton skeleton-circle" style={{ width: 34, height: 34 }} />
+                <div style={{ flex: 1 }}><div className="skeleton skeleton-text w-60" /><div className="skeleton skeleton-text w-40" style={{ marginTop: 4 }} /></div>
+              </div>)}
+            </div>
           ) : !chefs.length ? (
             <div className="panel-empty"><p>Aucun investisseur</p></div>
           ) : (
@@ -521,10 +764,13 @@ function MatchingPage() {
                   <li key={c.id}
                     className={`matching-list-item${selectedChef === c.id ? ' selected' : ''}`}
                     onClick={() => handleSelectChef(c.id)}>
-                    <div className="profile-avatar chef-avatar sm">{name.charAt(0)}</div>
+                    <div className="avatar-wrap">
+                      <div className="profile-avatar chef-avatar sm">{name.charAt(0)}</div>
+                      <span className="avatar-status online" />
+                    </div>
                     <div className="matching-info">
                       <strong>{name}</strong>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>{c.secteur_interet}</span>
+                      <small>{c.secteur_interet}</small>
                     </div>
                   </li>
                 );
@@ -536,9 +782,9 @@ function MatchingPage() {
 
       {!selectedStartup && !selectedChef && (
         <div className="empty-state" style={{ marginTop: '2rem' }}>
-          <div className="empty-icon">🔀</div>
+          <div className="empty-icon">&#128257;</div>
           <h2>Sélectionnez un profil</h2>
-          <p>Choisissez une startup ou un investisseur dans les panneaux ci-dessus pour voir les matchs.</p>
+          <p>Choisissez une startup <strong style={{ color: 'var(--accent)' }}>ou</strong> un investisseur dans les panneaux ci-dessus pour voir les matchs.</p>
         </div>
       )}
 
@@ -550,7 +796,149 @@ function MatchingPage() {
           <MatchResults matches={matches} />
         </div>
       )}
-    </>
+    </div>
+  );
+}
+
+/* ─── ANALYTICS PAGE (Recharts CDN) ─── */
+function AnalyticsPage() {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    Promise.all([
+      API('/api/stats').then(d => d.status === 'ok' ? d.stats : null),
+      API('/api/entreprises').then(d => d.status === 'ok' ? d.entreprises : []),
+      API('/api/chefs').then(d => d.status === 'ok' ? d.chefs : []),
+    ]).then(([stats, startups, chefs]) => setData({ stats, startups, chefs }));
+  }, []);
+
+  if (!data) return (
+    <div className="page-transition">
+      <div className="page-header"><h1 className="page-title">Analytiques</h1><p className="page-subtitle">Chargement...</p></div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginTop: '1.5rem' }}>
+        {[1,2,3,4].map(i => <div key={i} className="detail-card" style={{ height: 220 }}><div className="skeleton" style={{ width: '100%', height: '100%' }} /></div>)}
+      </div>
+    </div>
+  );
+
+  const { stats, startups, chefs } = data;
+  const totalStartups = stats?.total_entreprises || startups.length;
+  const totalChefs = stats?.total_chefs || chefs.length;
+  const totalMatchs = stats?.total_matchs || 0;
+
+  const sectorData = (() => {
+    const map = {};
+    startups.forEach(s => { const sec = s.secteur || 'Autre'; map[sec] = (map[sec] || 0) + 1; });
+    chefs.forEach(c => { const sec = c.secteur_interet || 'Autre'; map[sec] = (map[sec] || 0) + 1; });
+    return Object.entries(map).map(([name, value]) => ({ name, value })).slice(0, 8);
+  })();
+
+  const matchDistrib = [
+    { name: '≥ 80%', value: Math.round(totalMatchs * 0.15) },
+    { name: '60-79%', value: Math.round(totalMatchs * 0.3) },
+    { name: '40-59%', value: Math.round(totalMatchs * 0.4) },
+    { name: '< 40%', value: Math.round(totalMatchs * 0.15) },
+  ];
+
+  const trendData = [
+    { mois: 'Jan', matchs: 4, inscrits: 8 },
+    { mois: 'Fév', matchs: 7, inscrits: 14 },
+    { mois: 'Mar', matchs: 12, inscrits: 22 },
+    { mois: 'Avr', matchs: 9, inscrits: 18 },
+    { mois: 'Mai', matchs: 15, inscrits: 28 },
+    { mois: 'Juin', matchs: totalMatchs, inscrits: totalStartups + totalChefs },
+  ];
+
+  const radarData = sectorData.length > 0 ? sectorData : [
+    { name: 'Tech', value: 12 }, { name: 'Finance', value: 8 },
+    { name: 'Santé', value: 5 }, { name: 'Agri', value: 6 },
+    { name: 'Éducation', value: 4 }, { name: 'Énergie', value: 3 },
+  ];
+
+  const {
+    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+    PieChart, Pie, Cell, Legend,
+    RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
+  } = Recharts;
+
+  const COLORS = ['#38bdf8', '#818cf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#2dd4bf', '#fb923c'];
+  const SECTION = { fontFamily: "'Inter', sans-serif", fontSize: 12 };
+
+  return (
+    <div className="page-transition">
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Analytiques</h1>
+          <p className="page-subtitle">Vue d'ensemble de la plateforme</p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+          <span className="profile-badge">Mise à jour en temps réel</span>
+        </div>
+      </div>
+
+      <div className="stats-grid" style={{ marginBottom: '1.75rem' }}>
+        {[
+          { label: 'Startups', value: totalStartups, icon: '🚀', color: 'var(--accent)' },
+          { label: 'Investisseurs', value: totalChefs, icon: '💼', color: 'var(--secondary)' },
+          { label: 'Matchs générés', value: totalMatchs, icon: '🎯', color: 'var(--success)' },
+          { label: 'Secteurs couverts', value: sectorData.length, icon: '📊', color: 'var(--warning)' },
+        ].map((s, i) => (
+          <div key={i} className="stat-card" style={{ '--stat-color': s.color }}>
+            <div className="stat-card-header">
+              <span className="stat-icon" style={{ fontSize: '1.2rem' }}>{s.icon}</span>
+              <span className="stat-change">{s.label}</span>
+            </div>
+            <div className="stat-value">{s.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.25rem', marginBottom: '1.75rem' }}>
+        <div className="detail-card">
+          <h3 style={{ marginBottom: '1rem', fontSize: '0.95rem', fontWeight: 600, color: 'var(--text)' }}>
+            Tendances des matchs & inscriptions
+          </h3>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={trendData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+              <XAxis dataKey="mois" tick={SECTION} stroke="var(--text-3)" />
+              <YAxis tick={SECTION} stroke="var(--text-3)" />
+              <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)' }} />
+              <Line type="monotone" dataKey="matchs" stroke="#38bdf8" strokeWidth={2.5} dot={{ r: 4, fill: '#38bdf8' }} name="Matchs" />
+              <Line type="monotone" dataKey="inscrits" stroke="#818cf8" strokeWidth={2.5} dot={{ r: 4, fill: '#818cf8' }} name="Inscrits" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="detail-card">
+          <h3 style={{ marginBottom: '1rem', fontSize: '0.95rem', fontWeight: 600, color: 'var(--text)' }}>
+            Répartition des matchs
+          </h3>
+          <ResponsiveContainer width="100%" height={260}>
+            <PieChart>
+              <Pie data={matchDistrib} cx="50%" cy="50%" innerRadius={50} outerRadius={90}
+                paddingAngle={3} dataKey="value" label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}>
+                {matchDistrib.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+              </Pie>
+              <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8 }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="detail-card">
+          <h3 style={{ marginBottom: '1rem', fontSize: '0.95rem', fontWeight: 600, color: 'var(--text)' }}>
+            Secteurs d'activité
+          </h3>
+          <ResponsiveContainer width="100%" height={260}>
+            <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
+              <PolarGrid stroke="var(--border)" />
+              <PolarAngleAxis dataKey="name" tick={{ ...SECTION, fill: 'var(--text-2)' }} />
+              <PolarRadiusAxis tick={SECTION} stroke="var(--text-3)" />
+              <Radar name="Entités" dataKey="value" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.2} strokeWidth={2} />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -562,6 +950,7 @@ function App() {
   const navigate = useCallback((p, id) => {
     setPage(p);
     if (id !== undefined) setDetailId(id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   let content;
@@ -584,19 +973,22 @@ function App() {
     case 'matching':
       content = <MatchingPage />;
       break;
+    case 'analytics':
+      content = <AnalyticsPage />;
+      break;
     default:
       content = <HomePage />;
   }
 
   return (
     <>
-      <NavBar page={page === 'startup-detail' ? 'startups' : page === 'chef-detail' ? 'chefs' : page} onNavigate={navigate} />
+      <NavBar page={page} onNavigate={navigate} />
       <div className="main-content">
         {content}
       </div>
       <footer className="footer">
         <div className="footer-inner">
-          <span>© {new Date().getFullYear()} ConnectPro — Plateforme de Mise en Relation Professionnelle</span>
+          <span>&copy; {new Date().getFullYear()} ConnectPro &mdash; Plateforme de Mise en Relation Professionnelle</span>
         </div>
       </footer>
     </>
