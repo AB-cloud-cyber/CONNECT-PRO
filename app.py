@@ -4,6 +4,7 @@ Application Flask principale
 """
 
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Response, stream_with_context
+import traceback
 import time
 import json
 from psycopg2 import Error
@@ -230,29 +231,44 @@ def supprimer_chef(cid):
 
 @app.route('/matching')
 def matching_dashboard():
-    chefs = get_all_chefs()
-    entreprises = get_all_entreprises()
-    return render_template('matching/dashboard.html', chefs=chefs, entreprises=entreprises)
+    try:
+        chefs = get_all_chefs()
+        entreprises = get_all_entreprises()
+        return render_template('matching/dashboard.html', chefs=chefs, entreprises=entreprises)
+    except Exception as e:
+        print(f"[MATCHING DASHBOARD ERROR] {e}\n{traceback.format_exc()}")
+        flash("Erreur lors du chargement du tableau de bord.", 'error')
+        return render_template('matching/dashboard.html', chefs=[], entreprises=[])
 
 
 @app.route('/matching/chef/<int:cid>')
 def matching_chef(cid):
-    chef = get_chef_by_id(cid)
-    if not chef:
-        flash("Chef d'entreprise introuvable.", 'error')
+    try:
+        chef = get_chef_by_id(cid)
+        if not chef:
+            flash("Chef d'entreprise introuvable.", 'error')
+            return redirect(url_for('matching_dashboard'))
+        matches = find_top_matches_for_leader(cid, num_matches=10)
+        return render_template('matching/resultats_chef.html', chef=chef, matches=matches)
+    except Exception as e:
+        print(f"[MATCHING CHEF ERROR] cid={cid} {e}\n{traceback.format_exc()}")
+        flash("Erreur lors du calcul des matchs.", 'error')
         return redirect(url_for('matching_dashboard'))
-    matches = find_top_matches_for_leader(cid, num_matches=10)
-    return render_template('matching/resultats_chef.html', chef=chef, matches=matches)
 
 
 @app.route('/matching/startup/<int:eid>')
 def matching_startup(eid):
-    entreprise = get_entreprise_by_id(eid)
-    if not entreprise:
-        flash("Entreprise introuvable.", 'error')
+    try:
+        entreprise = get_entreprise_by_id(eid)
+        if not entreprise:
+            flash("Entreprise introuvable.", 'error')
+            return redirect(url_for('matching_dashboard'))
+        matches = find_top_matches_for_startup(eid, num_matches=10)
+        return render_template('matching/resultats_startup.html', entreprise=entreprise, matches=matches)
+    except Exception as e:
+        print(f"[MATCHING STARTUP ERROR] eid={eid} {e}\n{traceback.format_exc()}")
+        flash("Erreur lors du calcul des matchs.", 'error')
         return redirect(url_for('matching_dashboard'))
-    matches = find_top_matches_for_startup(eid, num_matches=10)
-    return render_template('matching/resultats_startup.html', entreprise=entreprise, matches=matches)
 
 
 # ─────────────────────────────────────────────
@@ -363,7 +379,18 @@ def not_found(e):
 
 @app.errorhandler(500)
 def server_error(e):
+    print(f"[SERVER ERROR] {e}\n{traceback.format_exc()}")
     return render_template('errors/500.html'), 500
+
+
+@app.route('/api/health')
+def health_check():
+    try:
+        chefs = get_all_chefs()
+        startups = get_all_entreprises()
+        return jsonify({"status": "ok", "chefs": len(chefs), "startups": len(startups)})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 # ─────────────────────────────────────────────

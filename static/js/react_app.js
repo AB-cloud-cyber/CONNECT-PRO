@@ -420,7 +420,7 @@ function ProfileCard({ item, type, onNavigate, index }) {
 }
 
 /* ─── HOME PAGE ─── */
-function HomePage() {
+function HomePage({ onNavigate }) {
   const [stats, setStats] = useState(null);
   const [statsAnimated, setStatsAnimated] = useState(false);
   const statsRef = useRef(null);
@@ -478,8 +478,8 @@ function HomePage() {
             pour vous proposer les meilleures mises en relation professionnelles en Afrique.
           </p>
           <div className="hero-actions">
-            <button className="btn btn-primary btn-lg" onClick={() => {}}>Lancer un matching &#8594;</button>
-            <button className="btn btn-outline btn-lg">Explorer les startups</button>
+            <button className="btn btn-primary btn-lg" onClick={() => onNavigate('swipe')}>Lancer un matching &#8594;</button>
+            <button className="btn btn-outline btn-lg" onClick={() => onNavigate('startups')}>Explorer les startups</button>
           </div>
         </div>
         <div className="hero-visual">
@@ -1396,7 +1396,7 @@ function App() {
   let content;
   switch (page) {
     case 'home':
-      content = <HomePage />;
+      content = <HomePage onNavigate={navigate} />;
       break;
     case 'startups':
       content = <StartupsPage onNavigate={navigate} />;
@@ -1423,7 +1423,7 @@ function App() {
       content = <ForceGraph />;
       break;
     default:
-      content = <HomePage />;
+      content = <HomePage onNavigate={navigate} />;
   }
 
   return (
