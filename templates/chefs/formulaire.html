@@ -12,7 +12,7 @@
     <a href="{{ url_for('liste_chefs') }}" class="btn btn-ghost">← Retour</a>
 </div>
 
-<div class="form-container">
+<div class="form-container p-glass-card">
     <form method="POST" class="pro-form" novalidate>
 
         <div class="form-section">
@@ -21,30 +21,30 @@
                 <div class="form-group form-col-2">
                     <label for="prenom_chef">Prénom <span class="required">*</span></label>
                     <input type="text" id="prenom_chef" name="prenom_chef"
-                           value="{{ chef.get('prenom_chef', '') }}" placeholder="ex: Jean" required>
+                           value="{{ chef.get('prenom_chef', '') }}" placeholder="ex: Jean" required class="p-focus-ring">
                 </div>
                 <div class="form-group form-col-2">
                     <label for="nom_chef">Nom <span class="required">*</span></label>
                     <input type="text" id="nom_chef" name="nom_chef"
-                           value="{{ chef.get('nom_chef', '') }}" placeholder="ex: Dupont" required>
+                           value="{{ chef.get('nom_chef', '') }}" placeholder="ex: Dupont" required class="p-focus-ring">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group form-col-2">
                     <label for="email_contact">Email <span class="required">*</span></label>
                     <input type="email" id="email_contact" name="email_contact"
-                           value="{{ chef.get('email_contact', '') }}" placeholder="jean.dupont@email.com" required>
+                           value="{{ chef.get('email_contact', '') }}" placeholder="jean.dupont@email.com" required class="p-focus-ring">
                 </div>
                 <div class="form-group form-col-2">
                     <label for="telephone">Téléphone</label>
                     <input type="tel" id="telephone" name="telephone"
-                           value="{{ chef.get('telephone', '') }}" placeholder="+237 6XX XXX XXX">
+                           value="{{ chef.get('telephone', '') }}" placeholder="+237 6XX XXX XXX" class="p-focus-ring">
                 </div>
             </div>
             <div class="form-group">
                 <label for="description_profil">Description du profil</label>
                 <textarea id="description_profil" name="description_profil" rows="4"
-                          placeholder="Décrivez votre parcours, vos objectifs d'investissement, vos domaines d'expertise…">{{ chef.get('description_profil', '') }}</textarea>
+                          placeholder="Décrivez votre parcours, vos objectifs d'investissement, vos domaines d'expertise…" class="p-focus-ring">{{ chef.get('description_profil', '') }}</textarea>
             </div>
         </div>
 
@@ -53,7 +53,7 @@
             <div class="form-row">
                 <div class="form-group form-col-2">
                     <label for="secteur_interet">Secteur d'intérêt <span class="required">*</span></label>
-                    <select id="secteur_interet" name="secteur_interet" required>
+                    <select id="secteur_interet" name="secteur_interet" required class="p-focus-ring">
                         <option value="">-- Choisir --</option>
                         {% set secteurs = ['Technologie', 'Fintech', 'Santé', 'Éducation', 'E-commerce',
                                            'IA & Machine Learning', 'Energie', 'Agriculture', 'Immobilier',
@@ -67,13 +67,13 @@
                     <label for="budget_investissement">Budget d'investissement</label>
                     <input type="text" id="budget_investissement" name="budget_investissement"
                            value="{{ chef.get('budget_investissement', '') }}"
-                           placeholder="ex: 50k–200k EUR">
+                           placeholder="ex: 50k–200k EUR" class="p-focus-ring">
                 </div>
             </div>
             <div class="form-group form-col-2">
                 <label for="localisation">Localisation</label>
                 <input type="text" id="localisation" name="localisation"
-                       value="{{ chef.get('localisation', '') }}" placeholder="ex: Yaoundé, Cameroun">
+                       value="{{ chef.get('localisation', '') }}" placeholder="ex: Yaoundé, Cameroun" class="p-focus-ring">
             </div>
         </div>
 
@@ -84,9 +84,9 @@
                     Compétences & expertises souhaitées
                     <span class="field-hint">Séparez par des virgules</span>
                 </label>
-                <input type="text" id="competences_recherchees" name="competences_recherchees"
-                       value="{{ chef.get('competences_recherchees', '') }}"
-                       placeholder="ex: IA, Gestion de Projet, Levée de Fonds, Marketing">
+<input type="text" id="competences_recherchees" name="competences_recherchees"
+                           value="{{ chef.get('competences_recherchees', '') }}"
+                           placeholder="ex: IA, Gestion de Projet, Levée de Fonds, Marketing" class="p-focus-ring">
                 <div class="skills-preview" id="skills-preview"></div>
             </div>
         </div>

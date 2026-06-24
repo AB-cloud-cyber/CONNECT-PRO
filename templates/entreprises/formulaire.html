@@ -12,7 +12,7 @@
     <a href="{{ url_for('liste_entreprises') }}" class="btn btn-ghost">← Retour</a>
 </div>
 
-<div class="form-container">
+<div class="form-container p-glass-card">
     <form method="POST" class="pro-form" novalidate>
 
         <div class="form-section">
@@ -22,11 +22,11 @@
                     <label for="nom_entreprise">Nom de l'entreprise <span class="required">*</span></label>
                     <input type="text" id="nom_entreprise" name="nom_entreprise"
                            value="{{ entreprise.get('nom_entreprise', '') }}"
-                           placeholder="ex: TechInnov SARL" required>
+                           placeholder="ex: TechInnov SARL" required class="p-focus-ring">
                 </div>
                 <div class="form-group form-col-2">
                     <label for="secteur">Secteur d'activité <span class="required">*</span></label>
-                    <select id="secteur" name="secteur" required>
+                    <select id="secteur" name="secteur" required class="p-focus-ring">
                         <option value="">-- Choisir --</option>
                         {% set secteurs = ['Technologie', 'Fintech', 'Santé', 'Éducation', 'E-commerce',
                                            'IA & Machine Learning', 'Energie', 'Agriculture', 'Immobilier',
@@ -42,19 +42,19 @@
                     <label for="email_contact">Email de contact <span class="required">*</span></label>
                     <input type="email" id="email_contact" name="email_contact"
                            value="{{ entreprise.get('email_contact', '') }}"
-                           placeholder="contact@mystartup.com" required>
+                           placeholder="contact@mystartup.com" required class="p-focus-ring">
                 </div>
                 <div class="form-group form-col-2">
                     <label for="site_web">Site web</label>
                     <input type="url" id="site_web" name="site_web"
                            value="{{ entreprise.get('site_web', '') }}"
-                           placeholder="https://www.mystartup.com">
+                           placeholder="https://www.mystartup.com" class="p-focus-ring">
                 </div>
             </div>
             <div class="form-group">
                 <label for="description">Description de l'entreprise</label>
                 <textarea id="description" name="description" rows="4"
-                          placeholder="Décrivez votre activité, votre mission, vos produits ou services…">{{ entreprise.get('description', '') }}</textarea>
+                          placeholder="Décrivez votre activité, votre mission, vos produits ou services…" class="p-focus-ring">{{ entreprise.get('description', '') }}</textarea>
             </div>
         </div>
 
@@ -65,11 +65,11 @@
                     <label for="localisation">Localisation</label>
                     <input type="text" id="localisation" name="localisation"
                            value="{{ entreprise.get('localisation', '') }}"
-                           placeholder="ex: Douala, Cameroun">
+                           placeholder="ex: Douala, Cameroun" class="p-focus-ring">
                 </div>
                 <div class="form-group form-col-3">
                     <label for="taille">Taille de l'entreprise</label>
-                    <select id="taille" name="taille">
+                    <select id="taille" name="taille" class="p-focus-ring">
                         <option value="">-- Choisir --</option>
                         {% for t in ['Micro (1–9)', 'Petite (10–49)', 'Moyenne (50–249)', 'Grande (250+)'] %}
                         <option value="{{ t }}" {% if entreprise.get('taille') == t %}selected{% endif %}>{{ t }}</option>
@@ -80,7 +80,7 @@
                     <label for="annee_creation">Année de création</label>
                     <input type="number" id="annee_creation" name="annee_creation"
                            value="{{ entreprise.get('annee_creation', '') }}"
-                           min="1900" max="2025" placeholder="ex: 2021">
+                           min="1900" max="2025" placeholder="ex: 2021" class="p-focus-ring">
                 </div>
             </div>
         </div>
@@ -92,9 +92,9 @@
                     Compétences & technologies
                     <span class="field-hint">Séparez par des virgules</span>
                 </label>
-                <input type="text" id="competences_offertes" name="competences_offertes"
-                       value="{{ entreprise.get('competences_offertes', '') }}"
-                       placeholder="ex: IA, Python, Marketing Digital, Blockchain">
+<input type="text" id="competences_offertes" name="competences_offertes"
+                           value="{{ entreprise.get('competences_offertes', '') }}"
+                           placeholder="ex: IA, Python, Marketing Digital, Blockchain" class="p-focus-ring">
                 <div class="skills-preview" id="skills-preview"></div>
             </div>
         </div>

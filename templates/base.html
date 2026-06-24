@@ -24,9 +24,9 @@
         <span class="brand-text">Connect<strong>Pro</strong></span>
     </a>
     <ul class="navbar-links">
-        <li><a href="{{ url_for('liste_entreprises') }}" class="nav-link {% if request.endpoint and 'entreprise' in request.endpoint %}active{% endif %}">Startups</a></li>
-        <li><a href="{{ url_for('liste_chefs') }}" class="nav-link {% if request.endpoint and 'chef' in request.endpoint %}active{% endif %}">Investisseurs</a></li>
-        <li><a href="{{ url_for('matching_dashboard') }}" class="nav-link {% if request.endpoint and 'matching' in request.endpoint %}active{% endif %}">Matching</a></li>
+        <li><a href="{{ url_for('liste_entreprises') }}" class="nav-link p-link-line {% if request.endpoint and 'entreprise' in request.endpoint %}active{% endif %}">Startups</a></li>
+        <li><a href="{{ url_for('liste_chefs') }}" class="nav-link p-link-line {% if request.endpoint and 'chef' in request.endpoint %}active{% endif %}">Investisseurs</a></li>
+        <li><a href="{{ url_for('matching_dashboard') }}" class="nav-link p-link-line {% if request.endpoint and 'matching' in request.endpoint %}active{% endif %}">Matching</a></li>
     </ul>
     <div class="navbar-cta">
         <a href="{{ url_for('nouvelle_entreprise') }}" class="btn btn-outline btn-sm">+ Startup</a>
@@ -56,6 +56,7 @@
 
 <!-- ── FOOTER ─────────────────────────────────────────────────── -->
 <footer class="footer">
+    <div class="p-divider-gradient"></div>
     <div class="footer-inner">
         <span class="brand-icon">◈</span>
         <span>ConnectPro &copy; 2025 — Plateforme de Mise en Relation Professionnelle</span>

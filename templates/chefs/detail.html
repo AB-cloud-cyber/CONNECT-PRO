@@ -15,7 +15,7 @@
 
 <div class="detail-layout">
     <aside class="detail-sidebar">
-        <div class="detail-card">
+        <div class="detail-card p-glass-card">
             <div class="profile-avatar chef-avatar large">
                 {{ chef.nom_chef[0]|upper }}{{ chef.prenom_chef[0]|upper }}
             </div>
@@ -77,7 +77,7 @@
             <h2>Meilleures startups correspondantes <span class="badge-count">{{ matches|length }}</span></h2>
             <div class="mini-matches">
                 {% for m in matches %}
-                <div class="mini-match-card">
+                <div class="mini-match-card p-card-lift">
                     <div class="mini-match-score">
                         <span class="score-ring" style="--pct: {{ m.score }}">{{ m.score|int }}%</span>
                     </div>

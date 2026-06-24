@@ -47,7 +47,7 @@
 <div class="match-results-grid compact">
     {% for m in matches %}
     {% set score_class = 'high' if m.score >= 70 else ('med' if m.score >= 40 else 'low') %}
-    <article class="match-result-card compact {{ score_class }}">
+    <article class="match-result-card compact p-stagger-fade {{ score_class }}">
         <div class="match-head">
             <div class="match-avatar-wrap">
                 <span class="swipe-avatar" style="width:44px;height:44px;font-size:1.1rem;background:{% if score_class == 'high' %}rgba(52,211,153,0.15){% elif score_class == 'med' %}rgba(251,191,36,0.15){% else %}rgba(90,106,138,0.15){% endif %};color:{% if score_class == 'high' %}#34d399{% elif score_class == 'med' %}#fbbf24{% else %}#5a6a8a{% endif %}">{{ m.nom_entreprise[:2] }}</span>
@@ -74,17 +74,17 @@
         <div class="score-breakdown">
             <div class="score-bar-row">
                 <span>Secteur</span>
-                <div class="score-bar"><div class="score-bar-fill secteur" style="width: {{ [m.score_secteur / 50 * 100, 100]|min }}%"></div></div>
+                <div class="score-bar p-progress-glow"><div class="score-bar-fill secteur" style="width: {{ [m.score_secteur / 50 * 100, 100]|min }}%"></div></div>
                 <span class="score-val">{{ m.score_secteur|int }}</span>
             </div>
             <div class="score-bar-row">
                 <span>Compétences</span>
-                <div class="score-bar"><div class="score-bar-fill competences" style="width: {{ [m.score_competences / 30 * 100, 100]|min }}%"></div></div>
+                <div class="score-bar p-progress-glow"><div class="score-bar-fill competences" style="width: {{ [m.score_competences / 30 * 100, 100]|min }}%"></div></div>
                 <span class="score-val">{{ m.score_competences|int }}</span>
             </div>
             <div class="score-bar-row">
                 <span>Localisation</span>
-                <div class="score-bar"><div class="score-bar-fill localisation" style="width: {{ [m.score_localisation / 15 * 100, 100]|min }}%"></div></div>
+                <div class="score-bar p-progress-glow"><div class="score-bar-fill localisation" style="width: {{ [m.score_localisation / 15 * 100, 100]|min }}%"></div></div>
                 <span class="score-val">{{ m.score_localisation|int }}</span>
             </div>
         </div>

@@ -14,7 +14,7 @@
 {% if entreprises %}
 <div class="cards-grid">
     {% for e in entreprises %}
-    <article class="profile-card">
+    <article class="profile-card p-card-lift p-glass-card">
         <div class="profile-card-header">
             <div class="profile-avatar startup-avatar">
                 {{ e.nom_entreprise[0]|upper }}
@@ -33,7 +33,7 @@
         {% if e.competences_offertes %}
         <div class="skills-list">
             {% for skill in e.competences_offertes.split(',')[:4] %}
-            <span class="skill-tag">{{ skill.strip() }}</span>
+            <span class="skill-tag p-tag-glow">{{ skill.strip() }}</span>
             {% endfor %}
         </div>
         {% endif %}
@@ -45,7 +45,7 @@
     {% endfor %}
 </div>
 {% else %}
-<div class="empty-state">
+<div class="empty-state p-mount">
     <div class="empty-icon">🏢</div>
     <h2>Aucune startup inscrite</h2>
     <p>Soyez le premier à inscrire votre entreprise sur la plateforme.</p>

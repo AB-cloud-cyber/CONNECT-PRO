@@ -14,7 +14,7 @@
 {% if chefs %}
 <div class="cards-grid">
     {% for c in chefs %}
-    <article class="profile-card">
+    <article class="profile-card p-card-lift p-glass-card">
         <div class="profile-card-header">
             <div class="profile-avatar chef-avatar">
                 {{ c.nom_chef[0]|upper }}{{ c.prenom_chef[0]|upper }}
@@ -33,7 +33,7 @@
         {% if c.competences_recherchees %}
         <div class="skills-list">
             {% for skill in c.competences_recherchees.split(',')[:4] %}
-            <span class="skill-tag chef-tag">{{ skill.strip() }}</span>
+            <span class="skill-tag chef-tag p-tag-glow">{{ skill.strip() }}</span>
             {% endfor %}
         </div>
         {% endif %}
@@ -48,7 +48,7 @@
     {% endfor %}
 </div>
 {% else %}
-<div class="empty-state">
+<div class="empty-state p-mount">
     <div class="empty-icon">👤</div>
     <h2>Aucun investisseur inscrit</h2>
     <p>Créez le premier profil investisseur sur la plateforme.</p>

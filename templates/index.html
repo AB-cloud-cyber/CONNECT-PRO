@@ -3,11 +3,11 @@
 
 {% block content %}
 <!-- HERO -->
-<section class="hero">
+<section class="hero p-hero-ambient">
     <div class="hero-bg"></div>
     <div class="hero-content">
         <p class="hero-eyebrow">Plateforme d'Intelligence Relationnelle</p>
-        <h1 class="hero-title">
+        <h1 class="hero-title p-glow-text">
             Connectez les<br>
             <em>bonnes personnes</em><br>
             aux bonnes startups
@@ -17,7 +17,7 @@
             pour vous proposer les meilleures mises en relation professionnelles.
         </p>
         <div class="hero-actions">
-            <a href="{{ url_for('matching_dashboard') }}" class="btn btn-primary btn-lg">
+            <a href="{{ url_for('matching_dashboard') }}" class="btn btn-primary btn-lg p-btn-shimmer">
                 Lancer un matching
             </a>
             <a href="{{ url_for('liste_entreprises') }}" class="btn btn-ghost btn-lg">
@@ -26,9 +26,9 @@
         </div>
     </div>
     <div class="hero-visual">
-        <div class="orb orb-1"></div>
+        <div class="orb orb-1 p-float"></div>
         <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+        <div class="orb orb-3 p-float-delayed"></div>
         <div class="network-lines">
             <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="200" cy="200" r="4" fill="var(--accent)" opacity="0.9"/>
@@ -53,17 +53,17 @@
 
 <!-- STATS -->
 <section class="stats-bar">
-    <div class="stat-item">
+    <div class="stat-item p-mount">
         <span class="stat-number" data-target="{{ stats.nb_startups }}">{{ stats.nb_startups }}</span>
         <span class="stat-label">Startups inscrites</span>
     </div>
     <div class="stat-divider"></div>
-    <div class="stat-item">
+    <div class="stat-item p-mount">
         <span class="stat-number" data-target="{{ stats.nb_chefs }}">{{ stats.nb_chefs }}</span>
         <span class="stat-label">Investisseurs actifs</span>
     </div>
     <div class="stat-divider"></div>
-    <div class="stat-item">
+    <div class="stat-item p-mount">
         <span class="stat-number" data-target="{{ stats.nb_matchs }}">{{ stats.nb_matchs }}</span>
         <span class="stat-label">Matchs potentiels</span>
     </div>
@@ -76,19 +76,19 @@
         <h2 class="section-title">Comment fonctionne le matching ?</h2>
     </div>
     <div class="steps-grid">
-        <div class="step-card">
+        <div class="step-card p-card-lift">
             <div class="step-number">01</div>
             <h3>Inscrivez votre profil</h3>
             <p>Renseignez votre secteur, vos compétences et vos objectifs en quelques minutes.</p>
         </div>
         <div class="step-arrow">→</div>
-        <div class="step-card">
+        <div class="step-card p-card-lift">
             <div class="step-number">02</div>
             <h3>L'algorithme analyse</h3>
             <p>Notre moteur TF-IDF + similarité cosinus compare secteurs, compétences et localisations.</p>
         </div>
         <div class="step-arrow">→</div>
-        <div class="step-card">
+        <div class="step-card p-card-lift">
             <div class="step-number">03</div>
             <h3>Recevez vos matchs</h3>
             <p>Les profils les plus compatibles apparaissent avec un score de compatibilité détaillé.</p>
@@ -102,7 +102,7 @@
         <h2>Prêt à trouver votre partenaire idéal ?</h2>
         <p>Inscrivez votre startup ou votre profil investisseur et lancez votre premier matching dès aujourd'hui.</p>
         <div class="cta-buttons">
-            <a href="{{ url_for('nouvelle_entreprise') }}" class="btn btn-primary btn-lg">Inscrire une startup</a>
+            <a href="{{ url_for('nouvelle_entreprise') }}" class="btn btn-primary btn-lg p-btn-shimmer">Inscrire une startup</a>
             <a href="{{ url_for('nouveau_chef') }}" class="btn btn-outline btn-lg">Créer un profil investisseur</a>
         </div>
     </div>
