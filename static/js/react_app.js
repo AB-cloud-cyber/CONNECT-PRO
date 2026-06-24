@@ -8,17 +8,17 @@ function SkeletonCard() {
   return (
     <div className="profile-card skeleton-card" style={{ pointerEvents: 'none' }}>
       <div className="profile-card-header">
-        <div className="skeleton skeleton-circle" />
+        <div className="skeleton skeleton-circle p-skeleton-premium" />
         <div className="skeleton-meta" style={{ flex: 1 }}>
-          <div className="skeleton skeleton-text w-60" />
-          <div className="skeleton skeleton-text w-40" style={{ marginTop: 6 }} />
+          <div className="skeleton skeleton-text w-60 p-skeleton-premium" />
+          <div className="skeleton skeleton-text w-40 p-skeleton-premium" style={{ marginTop: 6 }} />
         </div>
       </div>
-      <div className="skeleton skeleton-text w-90" />
-      <div className="skeleton skeleton-text w-70" />
-      <div className="skeleton skeleton-text w-50" style={{ marginTop: 4 }} />
+      <div className="skeleton skeleton-text w-90 p-skeleton-premium" />
+      <div className="skeleton skeleton-text w-70 p-skeleton-premium" />
+      <div className="skeleton skeleton-text w-50 p-skeleton-premium" style={{ marginTop: 4 }} />
       <div className="profile-card-footer">
-        <div className="skeleton skeleton-text w-30" />
+        <div className="skeleton skeleton-text w-30 p-skeleton-premium" />
       </div>
     </div>
   );
@@ -73,7 +73,7 @@ function BackToTop() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   return (
-    <button className={`back-to-top${visible ? ' visible' : ''}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+    <button className={`back-to-top${visible ? ' visible' : ''} p-scale-in`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       aria-label="Retour en haut" data-tip="Haut de page">
       &#8593;
     </button>
@@ -134,7 +134,7 @@ function EmptyIllustration({ type }) {
 }
 function EmptyState({ type, title, desc, action }) {
   return (
-    <div className="empty-state">
+    <div className="empty-state p-mount">
       <EmptyIllustration type={type} />
       <h2>{title || 'Aucun résultat'}</h2>
       <p>{desc || 'Aucune donnée disponible pour le moment.'}</p>
@@ -149,7 +149,7 @@ function SkillTags({ skills, variant }) {
   return (
     <div className="skills-list">
       {skills.map((s, i) => (
-        <span key={i} className={`skill-tag${variant ? ' ' + variant : ''}`}>{s}</span>
+        <span key={i} className={`skill-tag${variant ? ' ' + variant : ''} p-tag-glow`}>{s}</span>
       ))}
     </div>
   );
@@ -160,7 +160,7 @@ function SearchBar({ value, onChange, placeholder }) {
   return (
     <div className="search-box">
       <span className="search-icon">&#128269;</span>
-      <input className="search-input" type="text" placeholder={placeholder || 'Rechercher...'}
+      <input className="search-input p-focus-ring" type="text" placeholder={placeholder || 'Rechercher...'}
         value={value} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
@@ -205,7 +205,7 @@ function MatchResults({ matches, type }) {
           const desc = m.description_profil || m.description || '';
           const sector = m.secteur_interet || m.secteur || '';
           return (
-            <div key={i} className={`match-result-card ${cls}`}>
+            <div key={i} className={`match-result-card ${cls} p-stagger-fade`}>
               <div className="match-rank">#{i + 1}</div>
               <div className="score-display">
                 <MatchScoreCircle score={m.score} />
@@ -220,17 +220,17 @@ function MatchResults({ matches, type }) {
                 <div className="score-breakdown">
                   <div className="score-bar-row">
                     <span>Secteur</span>
-                    <div className="score-bar"><div className="score-bar-fill secteur" style={{ width: m.score_secteur + '%' }} /></div>
+                    <div className="score-bar"><div className="score-bar-fill secteur p-progress-glow" style={{ width: m.score_secteur + '%' }} /></div>
                     <span className="score-val">{Math.round(m.score_secteur)}</span>
                   </div>
                   <div className="score-bar-row">
                     <span>Compétences</span>
-                    <div className="score-bar"><div className="score-bar-fill competences" style={{ width: m.score_competences + '%' }} /></div>
+                    <div className="score-bar"><div className="score-bar-fill competences p-progress-glow" style={{ width: m.score_competences + '%' }} /></div>
                     <span className="score-val">{Math.round(m.score_competences)}</span>
                   </div>
                   <div className="score-bar-row">
                     <span>Localisation</span>
-                    <div className="score-bar"><div className="score-bar-fill localisation" style={{ width: m.score_localisation + '%' }} /></div>
+                    <div className="score-bar"><div className="score-bar-fill localisation p-progress-glow" style={{ width: m.score_localisation + '%' }} /></div>
                     <span className="score-val">{Math.round(m.score_localisation)}</span>
                   </div>
                 </div>
@@ -266,7 +266,7 @@ function NotificationBell() {
   return (
     <div className="notif-wrap" ref={ref}>
       <button className={`notif-bell${open ? ' active' : ''}${count > 0 ? ' has-unread' : ''}`} onClick={() => setOpen(!open)}>
-        {'🔔'}{count > 0 && <span className="notif-dot" />}
+        {'🔔'}{count > 0 && <span className="notif-dot p-notif-pulse" />}
       </button>
       {open && (
         <div className="notif-dropdown">
@@ -348,7 +348,7 @@ function NavBar({ page, onNavigate }) {
         <ul className="navbar-links">
           {links.map((l) => (
             <li key={l.key}>
-              <button className={`nav-link${activePage === l.key ? ' active' : ''}`}
+              <button className={`nav-link${activePage === l.key ? ' active p-link-line' : ''}`}
                 onClick={() => handleNav(l.key)}>{l.label}</button>
             </li>
           ))}
@@ -390,10 +390,10 @@ function ProfileCard({ item, type, onNavigate, index }) {
   const skillVariant = isStartup ? 'accent' : 'secondary';
 
   return (
-    <div className="profile-card reveal-scale" style={{ animationDelay: `${(index || 0) * 0.06}s`, transitionDelay: `${(index || 0) * 0.06}s` }} onClick={() => onNavigate(type === 'startup' ? 'startup-detail' : 'chef-detail', item.id)}>
+    <div className="profile-card reveal-scale p-card-lift p-glass-card p-stagger-fade" style={{ animationDelay: `${(index || 0) * 0.06}s`, transitionDelay: `${(index || 0) * 0.06}s` }} onClick={() => onNavigate(type === 'startup' ? 'startup-detail' : 'chef-detail', item.id)}>
       {(index === 0) && <div className="mesh-bg" style={{ position: 'absolute', inset: 0, opacity: 0.15, pointerEvents: 'none' }}><div className="mesh-blob" style={{ width: 200, height: 200, top: -50, left: -50, filter: 'blur(40px)' }} /></div>}
       <div className="profile-card-header">
-        <div className="avatar-wrap">
+        <div className={`avatar-wrap p-avatar-glow${badgeClass === 'chef' ? ' chef' : ''}`}>
           <div className={`profile-avatar ${avatarClass}`}>{name.charAt(0)}</div>
           <span className="avatar-status online" />
         </div>
@@ -409,7 +409,7 @@ function ProfileCard({ item, type, onNavigate, index }) {
         <span style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
           {isStartup ? 'Startup' : 'Investisseur'}
         </span>
-        <div className="card-actions">
+        <div className="card-actions p-card-actions">
           <button className="btn btn-ghost btn-sm" onClick={(e) => { e.stopPropagation(); onNavigate(type === 'startup' ? 'startup-detail' : 'chef-detail', item.id); }}>
             Voir le profil
           </button>
@@ -461,8 +461,8 @@ function HomePage({ onNavigate }) {
   };
 
   return (
-    <div className="page-transition">
-      <section className="hero">
+    <div className="page-transition p-page-enter">
+      <section className="hero p-hero-ambient">
         <div className="hero-bg">
           <div className="hero-gradient" />
           <div className="hero-grid" />
@@ -472,18 +472,18 @@ function HomePage({ onNavigate }) {
         </div>
         <div className="hero-content">
           <p className="hero-eyebrow">Plateforme d'Intelligence Relationnelle</p>
-          <h1 className="hero-title">Connectez les<br /><em>bonnes personnes</em><br />aux bonnes startups</h1>
+          <h1 className="hero-title p-glow-text">Connectez les<br /><em>bonnes personnes</em><br />aux bonnes startups</h1>
           <p className="hero-subtitle">
             Notre algorithme de matching analyse les secteurs, compétences et localisations
             pour vous proposer les meilleures mises en relation professionnelles en Afrique.
           </p>
           <div className="hero-actions">
-            <button className="btn btn-primary btn-lg" onClick={() => onNavigate('swipe')}>Lancer un matching &#8594;</button>
+            <button className="btn btn-primary btn-lg p-btn-shimmer" onClick={() => onNavigate('swipe')}>Lancer un matching &#8594;</button>
             <button className="btn btn-outline btn-lg" onClick={() => onNavigate('startups')}>Explorer les startups</button>
           </div>
         </div>
         <div className="hero-visual">
-          <div className="orb orb-1" /><div className="orb orb-2" /><div className="orb orb-3" />
+          <div className="orb orb-1 p-float" /><div className="orb orb-2" /><div className="orb orb-3 p-float-delayed" />
           <div className="network-3d">
             <svg viewBox="0 0 500 500" className="network-layer back">
               <defs>
@@ -542,17 +542,17 @@ function HomePage({ onNavigate }) {
       </section>
 
       <div className="stats-bar" ref={statsRef}>
-        <div className="stat-item">
+        <div className="stat-item p-mount">
           <span className="stat-number">{stats ? <AnimatedNumber value={stats.nb_startups} /> : '—'}</span>
           <span className="stat-label">Startups inscrites</span>
         </div>
         <div className="stat-divider" />
-        <div className="stat-item">
+        <div className="stat-item p-mount">
           <span className="stat-number">{stats ? <AnimatedNumber value={stats.nb_chefs} /> : '—'}</span>
           <span className="stat-label">Investisseurs actifs</span>
         </div>
         <div className="stat-divider" />
-        <div className="stat-item">
+        <div className="stat-item p-mount">
           <span className="stat-number">{stats ? <AnimatedNumber value={stats.nb_matchs} /> : '—'}</span>
           <span className="stat-label">Matchs potentiels</span>
         </div>
@@ -565,19 +565,19 @@ function HomePage({ onNavigate }) {
           <p className="section-subtitle">Notre algorithme TF-IDF analyse et compare les profils en 3 étapes</p>
         </div>
         <div className="steps-grid">
-          <div className="step-card">
+          <div className="step-card p-card-lift">
             <div className="step-number">01</div>
             <h3>Inscrivez votre profil</h3>
             <p>Renseignez votre secteur, vos compétences et vos objectifs en quelques minutes.</p>
           </div>
           <div className="step-arrow">&#8594;</div>
-          <div className="step-card">
+          <div className="step-card p-card-lift">
             <div className="step-number">02</div>
             <h3>L'algorithme analyse</h3>
             <p>Notre moteur TF-IDF + similarité cosinus compare secteurs et compétences.</p>
           </div>
           <div className="step-arrow">&#8594;</div>
-          <div className="step-card">
+          <div className="step-card p-card-lift">
             <div className="step-number">03</div>
             <h3>Recevez vos matchs</h3>
             <p>Les profils les plus compatibles apparaissent avec un score détaillé.</p>
@@ -598,7 +598,7 @@ function HomePage({ onNavigate }) {
             { icon: '🔒', title: 'Profils enrichis', desc: 'CV, compétences, badges, disponibilité. Import et analyse automatique de vos documents PDF.' },
             { icon: '🌍', title: 'Focus Afrique', desc: 'Écosystème adapté au marché africain : matching local, secteurs clés, mise en réseau régionale.' },
           ].map((f, i) => (
-            <div key={i} className="feature-card" style={{ animationDelay: `${i * 0.1}s` }}>
+            <div key={i} className="feature-card p-card-lift p-stagger-fade" style={{ animationDelay: `${i * 0.1}s` }}>
               <div className="feature-icon">{f.icon}</div>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
@@ -619,7 +619,7 @@ function HomePage({ onNavigate }) {
             { name: 'Fatima Z.', role: 'Investisseur, Casablanca', text: 'Enfin une plateforme qui comprend le marché africain. Les matchs sont pertinents et le dashboard me fait gagner un temps précieux.', avatar: 'F', stars: 5 },
             { name: 'David M.', role: 'Founder, AgriTech Lagos', text: 'La fonction d\'analyse de CV et le matching sectoriel sont les meilleurs que j\'ai vus. Une vraie révolution pour le networking en Afrique.', avatar: 'D', stars: 4 },
           ].map((t, i) => (
-            <div key={i} className="testimonial-card" style={{ animationDelay: `${i * 0.15}s` }}>
+            <div key={i} className="testimonial-card p-stagger-fade" style={{ animationDelay: `${i * 0.15}s` }}>
               <div className="testimonial-stars">{'★'.repeat(t.stars)}{'☆'.repeat(5 - t.stars)}</div>
               <p className="testimonial-text">{t.text}</p>
               <div className="testimonial-author">
@@ -666,7 +666,7 @@ function StartupsPage({ onNavigate }) {
   }, [data, search, filterSector]);
 
   if (!data) return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <div className="page-header"><div><h1 className="page-title">Startups</h1><p className="page-subtitle">Chargement...</p></div></div>
       <div className="cards-grid" style={{ opacity: 0.6 }}>
         {[1,2,3,4,5,6].map(i => <SkeletonCard key={i} />)}
@@ -675,7 +675,7 @@ function StartupsPage({ onNavigate }) {
   );
 
   return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <div className="page-header">
         <div>
           <h1 className="page-title">Startups</h1>
@@ -710,13 +710,13 @@ function StartupDetail({ id, onNavigate }) {
     API(`/api/matches/startup/${id}`).then((d) => { if (d.status === 'ok') setMatches(d.matches); });
   }, [id]);
 
-  if (!entreprise) return <div className="page-transition"><button className="back-btn" disabled>&#8592; Retour</button><SkeletonDetail /></div>;
+  if (!entreprise) return <div className="page-transition p-page-enter"><button className="back-btn" disabled>&#8592; Retour</button><SkeletonDetail /></div>;
 
   const e = entreprise;
   const skills = e.competences_offertes ? e.competences_offertes.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <button className="back-btn" onClick={() => onNavigate('startups')}>&#8592; Retour aux startups</button>
       <div className="detail-layout">
         <div className="detail-sidebar">
@@ -790,7 +790,7 @@ function ChefsPage({ onNavigate }) {
   }, [data, search, filterSector]);
 
   if (!data) return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <div className="page-header"><div><h1 className="page-title">Investisseurs</h1><p className="page-subtitle">Chargement...</p></div></div>
       <div className="cards-grid" style={{ opacity: 0.6 }}>
         {[1,2,3,4,5,6].map(i => <SkeletonCard key={i} />)}
@@ -799,7 +799,7 @@ function ChefsPage({ onNavigate }) {
   );
 
   return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <div className="page-header">
         <div>
           <h1 className="page-title">Investisseurs</h1>
@@ -834,14 +834,14 @@ function ChefDetail({ id, onNavigate }) {
     API(`/api/matches/chef/${id}`).then((d) => { if (d.status === 'ok') setMatches(d.matches); });
   }, [id]);
 
-  if (!chef) return <div className="page-transition"><button className="back-btn" disabled>&#8592; Retour</button><SkeletonDetail /></div>;
+  if (!chef) return <div className="page-transition p-page-enter"><button className="back-btn" disabled>&#8592; Retour</button><SkeletonDetail /></div>;
 
   const c = chef;
   const nomComplet = `${c.prenom_chef || ''} ${c.nom_chef || ''}`.trim();
   const skills = c.competences_recherchees ? c.competences_recherchees.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <button className="back-btn" onClick={() => onNavigate('chefs')}>&#8592; Retour aux investisseurs</button>
       <div className="detail-layout">
         <div className="detail-sidebar">
@@ -928,7 +928,7 @@ function MatchingPage() {
       : '';
 
   return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <div className="page-header">
         <div>
           <h1 className="page-title">Matching</h1>
@@ -937,7 +937,7 @@ function MatchingPage() {
       </div>
 
       <div className="matching-dashboard">
-        <div className="matching-panel startup-panel">
+        <div className="matching-panel startup-panel p-glass-card">
           <div className="matching-panel-header">
             <span className="panel-icon">&#127961;</span>
             <h2>Startups</h2>
@@ -956,8 +956,8 @@ function MatchingPage() {
             <ul className="matching-list">
               {startups.map((s) => (
                 <li key={s.id}
-                  className={`matching-list-item${selectedStartup === s.id ? ' selected' : ''}`}
-                  onClick={() => handleSelectStartup(s.id)}>
+                    className={`matching-list-item${selectedStartup === s.id ? ' selected' : ''} p-card-lift`}
+                    onClick={() => handleSelectStartup(s.id)}>
                   <div className="avatar-wrap">
                     <div className="profile-avatar startup-avatar sm">{s.nom_entreprise.charAt(0)}</div>
                     <span className="avatar-status online" />
@@ -972,13 +972,13 @@ function MatchingPage() {
           )}
         </div>
 
-        <div className="matching-arrow-center">
+        <div className="matching-arrow-center p-border-glow">
           <div className="matching-center-icon">&#x27F6;</div>
           <span>Match<br/>Engine</span>
           <small style={{ color: 'var(--text-3)', fontSize: '0.6rem' }}>TF-IDF + Cosinus</small>
         </div>
 
-        <div className="matching-panel chef-panel">
+        <div className="matching-panel chef-panel p-glass-card">
           <div className="matching-panel-header">
             <span className="panel-icon">&#128100;</span>
             <h2>Investisseurs</h2>
@@ -999,7 +999,7 @@ function MatchingPage() {
                 const name = `${c.prenom_chef || ''} ${c.nom_chef || ''}`.trim();
                 return (
                   <li key={c.id}
-                    className={`matching-list-item${selectedChef === c.id ? ' selected' : ''}`}
+                    className={`matching-list-item${selectedChef === c.id ? ' selected' : ''} p-card-lift`}
                     onClick={() => handleSelectChef(c.id)}>
                     <div className="avatar-wrap">
                       <div className="profile-avatar chef-avatar sm">{name.charAt(0)}</div>
@@ -1046,7 +1046,7 @@ function AnalyticsPage() {
   }, []);
 
   if (!data) return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <div className="page-header"><h1 className="page-title gradient-text">Analytiques</h1><p className="page-subtitle">Chargement...</p></div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginTop: '1.5rem' }}>
         {[1,2,3,4].map(i => <div key={i} className="detail-card" style={{ height: 220 }}><div className="skeleton" style={{ width: '100%', height: '100%' }} /></div>)}
@@ -1098,7 +1098,7 @@ function AnalyticsPage() {
   const SECTION = { fontFamily: "'Inter', sans-serif", fontSize: 12 };
 
   return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <div className="page-header">
         <div>
           <h1 className="page-title">Analytiques</h1>
@@ -1191,7 +1191,7 @@ function SwipeMatching() {
   }, []);
 
   if (!profiles) return (
-    <div className="page-transition" style={{ display: 'flex', justifyContent: 'center', padding: '3rem 0' }}>
+    <div className="page-transition p-page-enter" style={{ display: 'flex', justifyContent: 'center', padding: '3rem 0' }}>
       <div style={{ textAlign: 'center' }}>
         <div className="spinner" />
         <p style={{ color: 'var(--text-3)', marginTop: '1rem', fontSize: '0.85rem' }}>Chargement des profils...</p>
@@ -1200,7 +1200,7 @@ function SwipeMatching() {
   );
 
   if (index >= profiles.length) return (
-    <div className="page-transition swipe-container">
+    <div className="page-transition swipe-container p-page-enter">
       <EmptyState type="search" title="Plus de profils" desc="Vous avez vu tous les profils disponibles. Revenez plus tard pour de nouveaux matchs !"
         action={<button className="btn btn-primary" onClick={() => { setIndex(0); setDecided([]); }}>Recommencer</button>} />
     </div>
@@ -1229,7 +1229,7 @@ function SwipeMatching() {
   };
 
   return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <div className="page-header">
         <div>
           <h1 className="page-title">Swipe Matching</h1>
@@ -1245,12 +1245,12 @@ function SwipeMatching() {
           onTouchStart={(e) => handleStart(e.touches[0].clientX)}
           onTouchMove={(e) => handleMove(e.touches[0].clientX)}
           onTouchEnd={handleEnd}>
-          <div className={`swipe-card${dragging ? ' dragging' : ''}`}
+          <div className={`swipe-card${dragging ? ' dragging' : ''} p-scale-in`}
             ref={cardRef}
             style={{ transform: `translateX(${offsetX}px) rotate(${rotate}deg)`, opacity }}>
             <div className={`swipe-like${likeShow ? ' show' : ''}`}>MATCH</div>
             <div className={`swipe-nope${nopeShow ? ' show' : ''}`}>PASSER</div>
-            <div className="swipe-avatar startup-avatar" style={{ width: 80, height: 80, fontSize: '2rem' }}>{name.charAt(0)}</div>
+            <div className="swipe-avatar startup-avatar p-avatar-glow" style={{ width: 80, height: 80, fontSize: '2rem' }}>{name.charAt(0)}</div>
             <div className="swipe-name">{name}</div>
             {sector && <div className="swipe-sector">{sector}</div>}
             <div className="swipe-desc">{desc || 'Aucune description'}</div>
@@ -1260,9 +1260,9 @@ function SwipeMatching() {
           </div>
         </div>
         <div className="swipe-actions">
-          <button className="swipe-btn nope" onClick={() => { setOffsetX(-300); setTimeout(() => { setOffsetX(0); setIndex(index + 1); setDecided([...decided, { name, sector, liked: false }]); }, 200); }}>âœ•</button>
+          <button className="swipe-btn nope p-btn-shimmer" onClick={() => { setOffsetX(-300); setTimeout(() => { setOffsetX(0); setIndex(index + 1); setDecided([...decided, { name, sector, liked: false }]); }, 200); }}>âœ•</button>
           <button className="swipe-btn super" onClick={() => { setOffsetX(0); }}>â­\90</button>
-          <button className="swipe-btn like" onClick={() => { setOffsetX(300); setTimeout(() => { setOffsetX(0); setIndex(index + 1); setDecided([...decided, { name, sector, liked: true }]); }, 200); }}>âœ\x93</button>
+          <button className="swipe-btn like p-btn-shimmer" onClick={() => { setOffsetX(300); setTimeout(() => { setOffsetX(0); setIndex(index + 1); setDecided([...decided, { name, sector, liked: true }]); }, 200); }}>âœ\x93</button>
         </div>
         <div className="swipe-counter">
           {profiles.slice(0, Math.min(profiles.length, 8)).map((_, i) => (
@@ -1350,7 +1350,7 @@ function ForceGraph() {
   }, [data]);
 
   return (
-    <div className="page-transition">
+    <div className="page-transition p-page-enter">
       <div className="page-header">
         <div>
           <h1 className="page-title">RÃ©seau de connexions</h1>
@@ -1435,6 +1435,7 @@ function App() {
       </div>
       <BackToTop />
       <footer className="footer">
+        <div className="p-divider-gradient" />
         <div className="footer-inner">
           <span>&copy; {new Date().getFullYear()} ConnectPro &mdash; Plateforme de Mise en Relation Professionnelle</span>
         </div>
