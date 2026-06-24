@@ -305,3 +305,144 @@ input,textarea,select,button{font-family:inherit}
   .filter-pill{font-size:0.72rem;padding:0.25rem 0.55rem}
   .empty-state{padding:2.5rem 1rem}
 }
+
+/* ═══════════════════════════════════════
+   P- — PREMIUM ENHANCEMENTS v2026
+   Server-rendered templates
+   ═══════════════════════════════════════ */
+
+/* ─── P-GLASS CARD ─── */
+.p-glass-card{background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--radius);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transition:all var(--transition);position:relative}
+.p-glass-card::before{content:'';position:absolute;inset:0;border-radius:var(--radius);background:radial-gradient(ellipse at 20% 20%,rgba(56,189,248,0.04),transparent 60%);pointer-events:none;opacity:0;transition:opacity 0.6s ease}
+.p-glass-card:hover::before{opacity:1}
+.p-glass-card:hover{border-color:var(--border-hover);box-shadow:0 0 40px rgba(56,189,248,0.04)}
+
+/* ─── P-BORDER GLOW ─── */
+.p-border-glow{position:relative;border-radius:var(--radius);background:var(--bg-card);overflow:hidden}
+.p-border-glow::before{content:'';position:absolute;inset:0;border-radius:var(--radius);padding:1px;background:linear-gradient(135deg,var(--accent-muted),transparent 40%,var(--secondary-muted) 70%,var(--accent-muted));background-size:300% 300%;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity 0.5s ease}
+.p-border-glow:hover::before{opacity:1;animation:p-borderSpin 3s ease infinite}
+@keyframes p-borderSpin{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+/* ─── P-CARD 3D LIFT ─── */
+.p-card-lift{transform:perspective(1000px) translateZ(0);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.4s ease;will-change:transform;backface-visibility:hidden}
+.p-card-lift:hover{transform:perspective(1000px) translateZ(12px) translateY(-8px);box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+
+/* ─── P-LINK SOULIGNÉE ─── */
+.p-link-line{position:relative;color:var(--accent);cursor:pointer;display:inline-block}
+.p-link-line::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;background:linear-gradient(90deg,var(--accent),var(--accent-soft));transition:width 0.35s cubic-bezier(0.4,0,0.2,1);border-radius:1px}
+.p-link-line:hover::after{width:100%}
+
+/* ─── P-BTN SHIMMER ─── */
+.p-btn-shimmer{overflow:hidden}
+.p-btn-shimmer::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,0.05) 45%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.05) 55%,transparent 80%);background-size:200% 100%;animation:p-btnShimmer 3.5s ease-in-out infinite;pointer-events:none}
+@keyframes p-btnShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ─── P-AVATAR GLOW ─── */
+.p-avatar-glow{border-radius:50%;transition:box-shadow 0.35s ease,transform 0.35s ease}
+.p-avatar-glow:hover{box-shadow:0 0 0 4px rgba(56,189,248,0.18),0 0 24px rgba(56,189,248,0.08);transform:scale(1.03)}
+
+/* ─── P-PAGE ENTER ─── */
+.p-page-enter{animation:p-pageEnter 0.5s cubic-bezier(0.4,0,0.2,1)}
+@keyframes p-pageEnter{from{opacity:0;transform:translateY(16px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* ─── P-NOTIF PULSE ─── */
+.p-notif-pulse{animation:p-notifPulse 2.4s ease-in-out infinite}
+@keyframes p-notifPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.45)}}
+
+/* ─── P-FLOAT ─── */
+@keyframes p-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.p-float{animation:p-float 4.5s ease-in-out infinite}
+
+/* ─── P-SCALE IN ─── */
+@keyframes p-scaleIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+.p-scale-in{animation:p-scaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both}
+
+/* ─── P-SLIDE UP ─── */
+@keyframes p-slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.p-slide-up{animation:p-slideUp 0.5s cubic-bezier(0.4,0,0.2,1) both}
+
+/* ─── P-PULSE SOFT ─── */
+@keyframes p-pulseSoft{0%,100%{opacity:0.7;transform:scale(1)}50%{opacity:0.4;transform:scale(1.08)}}
+.p-pulse-soft{animation:p-pulseSoft 3.2s ease-in-out infinite}
+
+/* ─── P-SHIMMER TEXT ─── */
+@keyframes p-shimmerText{0%{background-position:-200% center}100%{background-position:200% center}}
+.p-shimmer-text{background:linear-gradient(90deg,var(--text) 30%,var(--accent-soft) 50%,var(--text) 70%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:p-shimmerText 3s linear infinite}
+
+/* ─── P-BREATHE ─── */
+@keyframes p-breathe{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.05);opacity:0.85}}
+.p-breathe{animation:p-breathe 4.5s ease-in-out infinite}
+
+/* ─── P-PROGRESS GLOW ─── */
+.p-progress-glow{position:relative;height:6px;background:var(--bg-3);border-radius:3px;overflow:hidden}
+.p-progress-glow::before{content:'';position:absolute;top:0;left:0;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent-dark),var(--accent),var(--accent-soft));background-size:200% 100%;animation:p-progressGlow 2.5s ease-in-out infinite;transition:width 1s cubic-bezier(0.4,0,0.2,1)}
+@keyframes p-progressGlow{0%,100%{background-position:0% 0}50%{background-position:100% 0}}
+
+/* ─── P-DIVIDER GRADIENT ─── */
+.p-divider-gradient{height:1px;background:linear-gradient(90deg,transparent,var(--accent-muted),var(--secondary-muted),transparent);border:none;margin:2rem 0}
+
+/* ─── P-TAG GLOW ─── */
+.p-tag-glow{display:inline-block;font-size:0.68rem;font-weight:600;padding:0.25rem 0.7rem;border-radius:20px;background:var(--accent-muted);color:var(--accent);border:1px solid transparent;transition:all 0.3s ease}
+.p-tag-glow:hover{border-color:var(--border-active);box-shadow:0 0 20px rgba(56,189,248,0.12);transform:translateY(-1.5px)}
+
+/* ─── P-BADGE POP ─── */
+@keyframes p-badgePop{0%{transform:scale(0.4);opacity:0}65%{transform:scale(1.18)}100%{transform:scale(1);opacity:1}}
+.p-badge-pop{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;font-size:0.65rem;font-weight:700;line-height:1;animation:p-badgePop 0.35s cubic-bezier(0.34,1.56,0.64,1) both}
+
+/* ─── P-STAT BAR ─── */
+.p-stat-bar{display:flex;align-items:center;gap:0.5rem;font-size:0.78rem}
+.p-stat-bar-track{flex:1;height:4px;background:var(--bg-3);border-radius:2px;overflow:hidden}
+.p-stat-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent-dark),var(--accent));transform:scaleX(0);transform-origin:left;transition:transform 1.2s cubic-bezier(0.4,0,0.2,1)}
+.p-stat-bar-fill.visible{transform:scaleX(1)}
+
+/* ─── P-STAGGER FADE ─── */
+@keyframes p-staggerFade{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.p-stagger-fade{animation:p-staggerFade 0.5s cubic-bezier(0.4,0,0.2,1) both}
+.p-stagger-fade:nth-child(1){animation-delay:0s}
+.p-stagger-fade:nth-child(2){animation-delay:0.08s}
+.p-stagger-fade:nth-child(3){animation-delay:0.16s}
+.p-stagger-fade:nth-child(4){animation-delay:0.24s}
+.p-stagger-fade:nth-child(5){animation-delay:0.32s}
+.p-stagger-fade:nth-child(6){animation-delay:0.4s}
+
+/* ─── P-SCROLL THIN ─── */
+.p-scroll-thin::-webkit-scrollbar{width:3px;height:3px}
+.p-scroll-thin::-webkit-scrollbar-thumb{background:var(--text-3);border-radius:2px}
+.p-scroll-thin{scrollbar-width:thin;scrollbar-color:var(--text-3) transparent}
+
+/* ─── P-GLOW TEXT ─── */
+.p-glow-text{text-shadow:0 0 20px rgba(56,189,248,0.12),0 0 40px rgba(56,189,248,0.04)}
+
+/* ─── P-DOT GRID ─── */
+.p-dot-grid{background-image:radial-gradient(circle,var(--border) 0.5px,transparent 0.5px);background-size:16px 16px}
+
+/* ─── P-INDICATOR ─── */
+@keyframes p-indicator{0%,100%{opacity:1}50%{opacity:0.3}}
+.p-indicator{width:8px;height:8px;border-radius:50%;display:inline-block;animation:p-indicator 1.8s ease-in-out infinite}
+.p-indicator.online{background:var(--success);box-shadow:0 0 8px rgba(52,211,153,0.4)}
+.p-indicator.away{background:var(--warning);box-shadow:0 0 8px rgba(251,191,36,0.4)}
+.p-indicator.busy{background:var(--error);box-shadow:0 0 8px rgba(248,113,113,0.4)}
+
+/* ─── P-OVERLAY GRADIENT ─── */
+.p-overlay-gradient{position:absolute;inset:0;background:linear-gradient(0deg,rgba(10,14,26,0.7) 0%,transparent 50%,rgba(10,14,26,0.3) 100%);pointer-events:none}
+
+/* ─── P-MOUNT ─── */
+@keyframes p-mount{from{opacity:0;transform:translateY(10px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.p-mount{animation:p-mount 0.35s cubic-bezier(0.4,0,0.2,1) both}
+
+/* ─── P-HERO AMBIENT ─── */
+@keyframes p-heroAmbient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.p-hero-ambient{position:relative}
+.p-hero-ambient::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 30%,rgba(56,189,248,0.025),transparent),radial-gradient(ellipse 50% 40% at 80% 70%,rgba(129,140,248,0.02),transparent);background-size:200% 200%;animation:p-heroAmbient 14s ease infinite;pointer-events:none;z-index:0}
+
+/* ─── P-CORNER GLOW ─── */
+.p-corner-glow{position:relative}
+.p-corner-glow::before{content:'';position:absolute;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(56,189,248,0.06),transparent 70%);top:-30px;right:-30px;pointer-events:none}
+.p-corner-glow::after{content:'';position:absolute;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(129,140,248,0.04),transparent 70%);bottom:-20px;left:-20px;pointer-events:none}
+
+/* ─── P-FOCUS RING ─── */
+.p-focus-ring:focus-visible{outline:2.5px solid var(--accent);outline-offset:3px;border-radius:var(--radius-sm);transition:outline-offset 0.15s ease}
+
+/* ─── P-CARD ACTIONS ─── */
+.p-card-actions{display:flex;gap:0.4rem;opacity:0;transform:translateY(6px);transition:all var(--transition)}
+.p-card:hover .p-card-actions,.p-card-actions.p-visible{opacity:1;transform:translateY(0)}
