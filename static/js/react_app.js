@@ -317,6 +317,27 @@ function BottomNav({ page, onNavigate }) {
   );
 }
 
+/* ─── COSMIC NAV ANIMATION ─── */
+function CosmicNavAnimation() {
+  const canvasRef = useRef(null);
+  useEffect(() => {
+    const el = canvasRef.current;
+    if (!el || !window.CosmicNav) return;
+    window.CosmicNav.init(el);
+    const onResize = () => window.CosmicNav.resize();
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.CosmicNav.destroy();
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
+  return (
+    <div className="cosmic-nav-wrap">
+      <canvas ref={canvasRef} className="cosmic-nav-canvas" />
+    </div>
+  );
+}
+
 /* ─── NAVBAR ─── */
 function NavBar({ page, onNavigate }) {
   const [theme, setTheme] = useState(() => {
@@ -353,6 +374,7 @@ function NavBar({ page, onNavigate }) {
             </li>
           ))}
         </ul>
+        <CosmicNavAnimation />
         <NotificationBell />
         <button className="btn btn-ghost btn-icon theme-btn" onClick={toggleTheme} title={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
           style={{ fontSize: '1.1rem' }}>{theme === 'dark' ? 'â\x98\x80' : 'ð\x9F\x8C\x99'}</button>

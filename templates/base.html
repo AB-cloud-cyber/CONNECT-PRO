@@ -13,6 +13,11 @@
     <meta name="theme-color" content="#0b1120">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+      .cosmic-nav-wrap{flex:1;display:flex;align-items:center;justify-content:flex-end;height:100%;min-width:160px;max-width:280px;overflow:hidden;position:relative}
+      .cosmic-nav-canvas{width:100%;height:100%;display:block;pointer-events:none}
+      @media(max-width:900px){.cosmic-nav-wrap{display:none}}
+    </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -28,6 +33,9 @@
         <li><a href="{{ url_for('liste_chefs') }}" class="nav-link p-link-line {% if request.endpoint and 'chef' in request.endpoint %}active{% endif %}">Investisseurs</a></li>
         <li><a href="{{ url_for('matching_dashboard') }}" class="nav-link p-link-line {% if request.endpoint and 'matching' in request.endpoint %}active{% endif %}">Matching</a></li>
     </ul>
+    <div class="cosmic-nav-wrap">
+        <canvas class="cosmic-nav-canvas" id="cosmicCanvas"></canvas>
+    </div>
     <div class="navbar-cta">
         <a href="{{ url_for('nouvelle_entreprise') }}" class="btn btn-outline btn-sm">+ Startup</a>
         <a href="{{ url_for('nouveau_chef') }}" class="btn btn-primary btn-sm">+ Investisseur</a>
@@ -64,7 +72,15 @@
 </footer>
 
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cosmic_animation.js') }}"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    var el = document.getElementById('cosmicCanvas');
+    if (el && window.CosmicNav) {
+        window.CosmicNav.init(el);
+        window.addEventListener('resize', window.CosmicNav.resize);
+    }
+});
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('{{ url_for("static", filename="sw.js") }}')
     .catch(function(err) { console.warn('[PWA] SW registration failed:', err); });
