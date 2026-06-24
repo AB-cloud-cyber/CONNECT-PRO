@@ -51,6 +51,35 @@ function SkeletonDetail() {
   );
 }
 
+/* ─── SCROLL REVEAL HOOK ─── */
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+    if (!els.length) return;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+}
+
+/* ─── BACK TO TOP ─── */
+function BackToTop() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 500);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <button className={`back-to-top${visible ? ' visible' : ''}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      aria-label="Retour en haut" data-tip="Haut de page">
+      &#8593;
+    </button>
+  );
+}
+
 /* ─── FILTER PILLS ─── */
 function FilterPills({ options, selected, onChange, label }) {
   return (
@@ -348,7 +377,7 @@ function NavBar({ page, onNavigate }) {
 }
 
 /* ─── PROFILE CARD ─── */
-function ProfileCard({ item, type, onNavigate }) {
+function ProfileCard({ item, type, onNavigate, index }) {
   const isStartup = type === 'startup';
   const name = isStartup ? item.nom_entreprise : `${item.prenom_chef || ''} ${item.nom_chef || ''}`.trim();
   const sector = isStartup ? item.secteur : item.secteur_interet;
@@ -361,7 +390,8 @@ function ProfileCard({ item, type, onNavigate }) {
   const skillVariant = isStartup ? 'accent' : 'secondary';
 
   return (
-    <div className="profile-card" onClick={() => onNavigate(type === 'startup' ? 'startup-detail' : 'chef-detail', item.id)}>
+    <div className="profile-card reveal-scale" style={{ animationDelay: `${(index || 0) * 0.06}s`, transitionDelay: `${(index || 0) * 0.06}s` }} onClick={() => onNavigate(type === 'startup' ? 'startup-detail' : 'chef-detail', item.id)}>
+      {(index === 0) && <div className="mesh-bg" style={{ position: 'absolute', inset: 0, opacity: 0.15, pointerEvents: 'none' }}><div className="mesh-blob" style={{ width: 200, height: 200, top: -50, left: -50, filter: 'blur(40px)' }} /></div>}
       <div className="profile-card-header">
         <div className="avatar-wrap">
           <div className={`profile-avatar ${avatarClass}`}>{name.charAt(0)}</div>
@@ -555,7 +585,7 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section reveal">
         <div className="section-header">
           <p className="section-eyebrow">Fonctionnalités</p>
           <h2 className="section-title">Tout ce dont vous avez besoin</h2>
@@ -577,7 +607,7 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section reveal">
         <div className="section-header">
           <p className="section-eyebrow">Témoignages</p>
           <h2 className="section-title">Ils nous font confiance</h2>
@@ -663,7 +693,7 @@ function StartupsPage({ onNavigate }) {
           desc={search || filterSector ? 'Essayez de modifier vos filtres.' : 'Aucune startup n\'est encore inscrite sur la plateforme.'} />
       ) : (
         <div className="cards-grid">
-          {filtered.map((e) => <ProfileCard key={e.id} item={e} type="startup" onNavigate={onNavigate} />)}
+          {filtered.map((e, i) => <ProfileCard key={e.id} item={e} type="startup" onNavigate={onNavigate} index={i} />)}
         </div>
       )}
     </div>
@@ -787,7 +817,7 @@ function ChefsPage({ onNavigate }) {
           desc={search || filterSector ? 'Essayez de modifier vos filtres.' : 'Aucun profil investisseur n\'est encore inscrit.'} />
       ) : (
         <div className="cards-grid">
-          {filtered.map((c) => <ProfileCard key={c.id} item={c} type="chef" onNavigate={onNavigate} />)}
+          {filtered.map((c, i) => <ProfileCard key={c.id} item={c} type="chef" onNavigate={onNavigate} index={i} />)}
         </div>
       )}
     </div>
@@ -1017,7 +1047,7 @@ function AnalyticsPage() {
 
   if (!data) return (
     <div className="page-transition">
-      <div className="page-header"><h1 className="page-title">Analytiques</h1><p className="page-subtitle">Chargement...</p></div>
+      <div className="page-header"><h1 className="page-title gradient-text">Analytiques</h1><p className="page-subtitle">Chargement...</p></div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginTop: '1.5rem' }}>
         {[1,2,3,4].map(i => <div key={i} className="detail-card" style={{ height: 220 }}><div className="skeleton" style={{ width: '100%', height: '100%' }} /></div>)}
       </div>
@@ -1355,6 +1385,7 @@ function ForceGraph() {
 function App() {
   const [page, setPage] = useState('home');
   const [detailId, setDetailId] = useState(null);
+  useScrollReveal();
 
   const navigate = useCallback((p, id) => {
     setPage(p);
@@ -1402,6 +1433,7 @@ function App() {
       <div className="main-content">
         {content}
       </div>
+      <BackToTop />
       <footer className="footer">
         <div className="footer-inner">
           <span>&copy; {new Date().getFullYear()} ConnectPro &mdash; Plateforme de Mise en Relation Professionnelle</span>
