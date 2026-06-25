@@ -317,8 +317,8 @@ function BottomNav({ page, onNavigate }) {
   );
 }
 
-/* ─── COSMIC NAV ANIMATION ─── */
-function CosmicNavAnimation() {
+/* ─── HERO COSMIC ANIMATION ─── */
+function HeroCosmic() {
   const canvasRef = useRef(null);
   useEffect(() => {
     const el = canvasRef.current;
@@ -326,16 +326,9 @@ function CosmicNavAnimation() {
     window.CosmicNav.init(el);
     const onResize = () => window.CosmicNav.resize();
     window.addEventListener('resize', onResize);
-    return () => {
-      window.CosmicNav.destroy();
-      window.removeEventListener('resize', onResize);
-    };
+    return () => { window.CosmicNav.destroy(); window.removeEventListener('resize', onResize); };
   }, []);
-  return (
-    <div className="cosmic-nav-wrap">
-      <canvas ref={canvasRef} className="cosmic-nav-canvas" />
-    </div>
-  );
+  return <canvas ref={canvasRef} className="hero-canvas" />;
 }
 
 /* ─── NAVBAR ─── */
@@ -374,7 +367,6 @@ function NavBar({ page, onNavigate }) {
             </li>
           ))}
         </ul>
-        <CosmicNavAnimation />
         <NotificationBell />
         <button className="btn btn-ghost btn-icon theme-btn" onClick={toggleTheme} title={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
           style={{ fontSize: '1.1rem' }}>{theme === 'dark' ? 'â\x98\x80' : 'ð\x9F\x8C\x99'}</button>
@@ -505,57 +497,7 @@ function HomePage({ onNavigate }) {
           </div>
         </div>
         <div className="hero-visual">
-          <div className="orb orb-1 p-float" /><div className="orb orb-2" /><div className="orb orb-3 p-float-delayed" />
-          <div className="network-3d">
-            <svg viewBox="0 0 500 500" className="network-layer back">
-              <defs>
-                <radialGradient id="nodeGlow"><stop offset="0%" stopColor="#38bdf8" stopOpacity="0.8"/><stop offset="100%" stopColor="#38bdf8" stopOpacity="0"/></radialGradient>
-                <linearGradient id="lineFlow" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#38bdf8" stopOpacity="0"/><stop offset="50%" stopColor="#38bdf8" stopOpacity="0.25"/><stop offset="100%" stopColor="#38bdf8" stopOpacity="0"/></linearGradient>
-              </defs>
-              {/* Arrière-plan: connexions lointaines */}
-              {[[250,250,70,90],[250,250,430,90],[250,250,70,420],[250,250,430,420],[70,90,30,200],[430,90,470,320]].map(([x1,y1,x2,y2],i) => (
-                <line key={`b${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#38bdf8" strokeWidth="0.3" opacity="0.08" />
-              ))}
-              {/* Nœuds arrière */}
-              {[[70,90,3],[430,90,3],[70,420,3],[430,420,3],[30,200,2],[470,320,2],[110,290,2],[390,140,2]].map(([cx,cy,r],i) => (
-                <circle key={`bn${i}`} cx={cx} cy={cy} r={r} fill="#38bdf8" opacity="0.15" className={`node-pulse-${i}`} />
-              ))}
-            </svg>
-            <svg viewBox="0 0 500 500" className="network-layer mid">
-              {/* Connexions intermédiaires */}
-              {[[250,250,130,140],[250,250,370,140],[250,250,130,370],[250,250,370,370],[130,140,370,370],[370,140,130,370],[130,140,60,260],[370,140,440,260]].map(([x1,y1,x2,y2],i) => (
-                <line key={`m${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#38bdf8" strokeWidth={i < 6 ? 1 : 0.5} opacity={i < 4 ? 0.3 : 0.12} className={`line-flow-${i}`} strokeDasharray={i < 4 ? 'none' : '6 4'} />
-              ))}
-              {/* Bouclier orbital */}
-              <ellipse cx="250" cy="250" rx="160" ry="60" fill="none" stroke="rgba(56,189,248,0.06)" strokeWidth="1" transform="rotate(-20,250,250)" />
-              <ellipse cx="250" cy="250" rx="120" ry="45" fill="none" stroke="rgba(129,140,248,0.05)" strokeWidth="1" transform="rotate(30,250,250)" />
-              {/* Nœuds intermédiaires */}
-              {[[130,140,5.5,1],[370,140,5.5,0.5],[130,370,5.5,0.8],[370,370,5.5,0.3],[60,260,3.5,2],[440,260,3.5,1.5],[200,50,3,2.5],[300,450,3,1.8]].map(([cx,cy,r,d],i) => (
-                <g key={`mn${i}`} style={{ animationDelay: `${d}s` }}>
-                  <circle cx={cx} cy={cy} r={r+2} fill="url(#nodeGlow)" opacity="0.4" />
-                  <circle cx={cx} cy={cy} r={r} fill="#38bdf8" opacity="0.5" />
-                </g>
-              ))}
-            </svg>
-            <svg viewBox="0 0 500 500" className="network-layer front">
-              {/* Connexions principales */}
-              {[[250,250,200,180],[250,250,300,180],[250,250,190,330],[250,250,310,330],[200,180,300,180],[190,330,310,330],[200,180,190,330],[300,180,310,330]].map(([x1,y1,x2,y2],i) => (
-                <line key={`f${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke={i < 2 ? 'rgba(56,189,248,0.35)' : 'rgba(56,189,248,0.15)'} strokeWidth={i < 2 ? 1.5 : 0.8} className={`line-flow-${i}`} />
-              ))}
-              {/* Centre névralgique */}
-              <circle cx="250" cy="250" r="18" fill="url(#nodeGlow)" opacity="0.6" />
-              <circle cx="250" cy="250" r="8" fill="#38bdf8" opacity="0.9" />
-              <circle cx="250" cy="250" r="8" fill="none" stroke="#38bdf8" strokeWidth="1" opacity="0.5" className="center-pulse" />
-              {/* Nœuds avant */}
-              {[[200,180,7,0],[300,180,7,0.8],[190,330,7,1.6],[310,330,7,2.4],[145,240,4,1],[355,240,4,1.5],[250,110,4,2],[250,400,4,0.5]].map(([cx,cy,r,d],i) => (
-                <g key={`fn${i}`} style={{ animationDelay: `${d}s` }}>
-                  <circle cx={cx} cy={cy} r={r+3} fill="url(#nodeGlow)" opacity="0.5" />
-                  <circle cx={cx} cy={cy} r={r} fill="#7dd3fc" opacity="0.8" />
-                  <circle cx={cx} cy={cy} r={r+1} fill="none" stroke="#38bdf8" strokeWidth="0.5" opacity="0.4" className={`orbit-${i}`} />
-                </g>
-              ))}
-            </svg>
-          </div>
+          <HeroCosmic />
         </div>
         <div className="hero-scroll">
           <span>Découvrir</span>
